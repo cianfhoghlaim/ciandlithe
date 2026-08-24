@@ -1,0 +1,38 @@
+# CIANDLITHE build of locket stack. Original: n/a (new build). Licence: BUSL-1.1 (per LICENSE.md)
+#
+# =============================================================================
+# LOCKET - Pangolin Private Resource (6-label shape)
+# =============================================================================
+# Per the Pangolin 6-Label Pattern requirement in infrastructure-stacks/spec.md:
+#   1. name                - unique slug
+#   2. mode                - http / tcp / udp
+#   3. full-domain         - the FQDN
+#   4. destination-port    - the container port
+#   5. protocol            - http / https
+#   6. roles[0]            - the Traefik role
+#
+# Locket sidecars do NOT need public exposure via Pangolin. The HTTP API on
+# :9090 is consumed by parent containers over the inter-container bridge
+# network. The pangolin.yaml is kept for:
+#   * consistent Komodo deployment (every stack registers a resource)
+#   * optional admin access for debugging (e.g. curl /health from a browser
+#     behind Pocket ID SSO)
+#   * future external dashboard surface (Locket metrics + resolved-secret
+#     lineage viewer)
+#
+# Members of the "Admin" Pangolin role can hit the API directly for
+# debugging; the default "Member" role cannot (matches the security
+# posture of the other control-plane services).
+# =============================================================================
+
+pangolin:
+  private-resources:
+    locket:
+      name: "Locket Secret-Injection API"
+      mode: "http"
+      full-domain: "locket.ciandlithe.ie"
+      destination: "locket"
+      destination-port: 9090
+      protocol: "http"
+      roles:
+        - "Admin"

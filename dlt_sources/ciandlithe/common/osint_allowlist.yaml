@@ -1,0 +1,493 @@
+# =============================================================================
+# CIANDLITHE — OSINT source URL allowlist
+# =============================================================================
+#
+# Per LICENSE.md §5.1: every DLT source file at `dlt_sources/ciandlithe/**`
+# MUST reference only URLs listed in this file. The CI gate `mise run
+# lint:license` enforces this at merge time.
+#
+# Every URL MUST point at a public-facing page of a body named in
+# `LICENSE.md §3.1–§3.7`. Foreign bodies are subject to the 3-step gate
+# (LICENSE.md §6).
+#
+# Format:
+#   - url: the canonical source URL (https only)
+#   - jurisdiction: one of IRELAND / NI / SCOTLAND / WALES / ENGLAND / JERSEY / GUERNSEY / IOM / UK_WIDE
+#   - body: the licence body name (per §3.1–§3.7)
+#   - cohort: one of the 7 BLIP v1 cohorts
+#   - source_family: the dlt_sources family (e.g. courts_ie, irish_statute_book, hse, nhs_england, nidirect, scotcourts, judiciary_uk, gmc)
+#
+# This file is the canonical source-of-truth. Updates MUST be made via PR
+# + openspec change (the `ciandlithe-dlt-source-policy-v1` follow-up).
+# =============================================================================
+
+allowlist_version: "1.0.0"
+last_updated: "2026-08-24"
+change_date: "2031-08-24"
+
+# ---------------------------------------------------------------------------
+# Republic of Ireland — courts + tribunals + regulators
+# ---------------------------------------------------------------------------
+- url: https://www.courts.ie/
+  jurisdiction: IRELAND
+  body: Courts Service of Ireland
+  cohort: civil_litigation_forms
+  source_family: courts_ie
+- url: https://www.courts.ie/forms
+  jurisdiction: IRELAND
+  body: Courts Service of Ireland
+  cohort: civil_litigation_forms
+  source_family: courts_ie_forms
+- url: https://www.courts.ie/fees
+  jurisdiction: IRELAND
+  body: Courts Service of Ireland
+  cohort: civil_litigation_forms
+  source_family: courts_ie_fees
+- url: https://www.courts.ie/judgements
+  jurisdiction: IRELAND
+  body: Courts Service of Ireland
+  cohort: court_judgments_tribunal_decisions
+  source_family: courts_ie_judgements
+- url: https://www.courts.ie/rules
+  jurisdiction: IRELAND
+  body: Courts Service of Ireland
+  cohort: statutes_si_court_rules
+  source_family: courts_ie_rules
+- url: https://www.courts.ie/practice-notes
+  jurisdiction: IRELAND
+  body: Courts Service of Ireland
+  cohort: statutes_si_court_rules
+  source_family: courts_ie_practice_notes
+- url: https://www.irishstatutebook.ie/eli/{year}/act/{number}/enacted/en/xml
+  jurisdiction: IRELAND
+  body: Office of the Attorney General (Irish Statute Book)
+  cohort: statutes_si_court_rules
+  source_family: irish_statute_book
+- url: https://www.justice.ie/
+  jurisdiction: IRELAND
+  body: Department of Justice (Ireland)
+  cohort: statutes_si_court_rules
+  source_family: doj
+- url: https://www.citizensinformation.ie/
+  jurisdiction: IRELAND
+  body: Citizens Information Board
+  cohort: civil_litigation_forms
+  source_family: citizensinformation
+- url: https://www.injuriesboard.ie/
+  jurisdiction: IRELAND
+  body: Personal Injuries Assessment Board (PIAB)
+  cohort: personal_injury_piab_nhs
+  source_family: injuries_ie
+- url: https://www.workplacerelations.ie/
+  jurisdiction: IRELAND
+  body: Workplace Relations Commission (WRC)
+  cohort: workplace_relations_wrc_et
+  source_family: workplace_relations
+- url: https://www.lawreform.ie/
+  jurisdiction: IRELAND
+  body: Law Reform Commission of Ireland
+  cohort: statutes_si_court_rules
+  source_family: lawreform
+- url: https://www.gov.ie/en/news/
+  jurisdiction: IRELAND
+  body: Government of Ireland (news sub-tree)
+  cohort: statutes_si_court_rules
+  source_family: gov_ie_news
+- url: https://www.gov.ie/en/publication/
+  jurisdiction: IRELAND
+  body: Government of Ireland (publications sub-tree)
+  cohort: statutes_si_court_rules
+  source_family: gov_ie_publication
+- url: https://www.gov.ie/en/department-of-justice/
+  jurisdiction: IRELAND
+  body: Department of Justice (Ireland)
+  cohort: statutes_si_court_rules
+  source_family: gov_ie_law
+- url: https://www.gov.ie/en/organisation/department-of-justice/
+  jurisdiction: IRELAND
+  body: Department of Justice (Ireland)
+  cohort: statutes_si_court_rules
+  source_family: gov_ie_law_org
+- url: https://www.gov.ie/en/organisation/department-of-health/
+  jurisdiction: IRELAND
+  body: Department of Health (Ireland)
+  cohort: hse_nhs_complaints
+  source_family: gov_ie_health_org
+- url: https://www.injuries.ie/
+  jurisdiction: IRELAND
+  body: Personal Injuries Assessment Board (PIAB) — alternate injuries.ie domain
+  cohort: personal_injury_piab_nhs
+  source_family: injuries_ie_alt
+- url: https://workplacerelations.ie/
+  jurisdiction: IRELAND
+  body: Workplace Relations Commission (WRC) — bare domain
+  cohort: workplace_relations_wrc_et
+  source_family: workplace_relations_bare
+- url: https://www.scot.nhs.uk/
+  jurisdiction: SCOTLAND
+  body: NHS Scotland (scot.nhs.uk alternate)
+  cohort: hse_nhs_complaints
+  source_family: nhs_scotland_alt
+- url: https://coroners.ie/
+  jurisdiction: IRELAND
+  body: Coroner Service of Ireland
+  cohort: court_judgments_tribunal_decisions
+  source_family: coroners_ie
+- url: https://www.hse.ie/
+  jurisdiction: IRELAND
+  body: Health Service Executive (HSE)
+  cohort: hse_nhs_complaints
+  source_family: hse
+- url: https://www.hpsc.ie/
+  jurisdiction: IRELAND
+  body: Health Protection Surveillance Centre (HPSC)
+  cohort: hse_nhs_complaints
+  source_family: hpsc
+- url: https://www.gov.ie/en/department-of-health/
+  jurisdiction: IRELAND
+  body: Department of Health (Ireland)
+  cohort: hse_nhs_complaints
+  source_family: doh
+- url: https://www.medicalcouncil.ie/
+  jurisdiction: IRELAND
+  body: Medical Council of Ireland
+  cohort: medical_malpractice
+  source_family: medical_council
+- url: https://www.nmbi.ie/
+  jurisdiction: IRELAND
+  body: Nursing and Midwifery Board of Ireland (NMBI)
+  cohort: medical_malpractice
+  source_family: nmbi
+- url: https://www.psi.ie/
+  jurisdiction: IRELAND
+  body: Pharmaceutical Society of Ireland (PSI)
+  cohort: medical_malpractice
+  source_family: psi
+
+# ---------------------------------------------------------------------------
+# Northern Ireland
+# ---------------------------------------------------------------------------
+- url: https://www.courtsni.gov.uk/
+  jurisdiction: NI
+  body: Northern Ireland Courts and Tribunals Service (NICTS)
+  cohort: court_judgments_tribunal_decisions
+  source_family: nicts
+- url: https://www.nidirect.gov.uk/
+  jurisdiction: NI
+  body: nidirect (NI government services)
+  cohort: statutes_si_court_rules
+  source_family: nidirect
+- url: https://www.justice-ni.gov.uk/
+  jurisdiction: NI
+  body: Department of Justice (Northern Ireland)
+  cohort: statutes_si_court_rules
+  source_family: justice_ni
+- url: https://www.nursingandmidwiferycareersni.com/ (NMBI-NI equivalent)
+  jurisdiction: NI
+  body: NI equivalents of regulators
+  cohort: medical_malpractice
+  source_family: nmbi_ni_equivalent
+- url: https://www.rqia.org.uk/
+  jurisdiction: NI
+  body: Regulation and Quality Improvement Authority (RQIA)
+  cohort: hse_nhs_complaints
+  source_family: rqia
+- url: https://www.lawsoc-ni.org/
+  jurisdiction: NI
+  body: Law Society of Northern Ireland
+  cohort: civil_litigation_forms
+  source_family: law_society_ni
+- url: https://www.barlibraryni.com/
+  jurisdiction: NI
+  body: Bar of Northern Ireland
+  cohort: civil_litigation_forms
+  source_family: bar_ni
+
+# ---------------------------------------------------------------------------
+# Scotland
+# ---------------------------------------------------------------------------
+- url: https://www.scotcourts.gov.uk/
+  jurisdiction: SCOTLAND
+  body: Scottish Courts and Tribunals Service
+  cohort: court_judgments_tribunal_decisions
+  source_family: scotcourts
+- url: https://www.legislation.gov.uk/
+  jurisdiction: UK_WIDE
+  body: The National Archives (UK Crown)
+  cohort: statutes_si_court_rules
+  source_family: legislation_gov_uk
+- url: https://www.legislation.gov.uk/scot
+  jurisdiction: SCOTLAND
+  body: The National Archives (Scotland legislation)
+  cohort: statutes_si_court_rules
+  source_family: legislation_gov_uk_scotland
+- url: https://www.scotlawreports.com/
+  jurisdiction: SCOTLAND
+  body: Scottish Law Reports
+  cohort: court_judgments_tribunal_decisions
+  source_family: scot_law_reports
+- url: https://www.lawscot.org.uk/
+  jurisdiction: SCOTLAND
+  body: Law Society of Scotland
+  cohort: civil_litigation_forms
+  source_family: law_society_scotland
+- url: https://www.advocates.org.uk/
+  jurisdiction: SCOTLAND
+  body: Faculty of Advocates (Scotland)
+  cohort: civil_litigation_forms
+  source_family: faculty_of_advocates
+- url: https://www.scotcomplaints.org.uk/
+  jurisdiction: SCOTLAND
+  body: Scottish Legal Complaints Commission (SLCC)
+  cohort: civil_litigation_forms
+  source_family: slcc
+- url: https://www.nhsinform.scot/
+  jurisdiction: SCOTLAND
+  body: NHS Inform (Scotland)
+  cohort: hse_nhs_complaints
+  source_family: nhs_scotland
+- url: https://www.healthcareimprovementscotland.org/
+  jurisdiction: SCOTLAND
+  body: Healthcare Improvement Scotland (HIS)
+  cohort: hse_nhs_complaints
+  source_family: his
+- url: https://www.scottishmedicines.org.uk/
+  jurisdiction: SCOTLAND
+  body: Scottish Medicines Consortium (SMC)
+  cohort: medical_malpractice
+  source_family: smc
+- url: https://www.employmenttribunals.scot/
+  jurisdiction: SCOTLAND
+  body: Employment Tribunals (Scotland)
+  cohort: workplace_relations_wrc_et
+  source_family: scot_et
+
+# ---------------------------------------------------------------------------
+# Wales
+# ---------------------------------------------------------------------------
+- url: https://www.legislation.gov.uk/wales
+  jurisdiction: WALES
+  body: The National Archives (Wales legislation)
+  cohort: statutes_si_court_rules
+  source_family: legislation_gov_uk_wales
+- url: https://www.lawsocwales.co.uk/
+  jurisdiction: WALES
+  body: Law Society (Wales)
+  cohort: civil_litigation_forms
+  source_family: law_society_wales
+- url: https://phw.nhs.wales/
+  jurisdiction: WALES
+  body: Public Health Wales (PHW)
+  cohort: hse_nhs_complaints
+  source_family: phw
+- url: https://www.hiw.org.uk/
+  jurisdiction: WALES
+  body: Healthcare Inspectorate Wales (HIW)
+  cohort: hse_nhs_complaints
+  source_family: hiw
+- url: https://www.employmenttribunals.wales/
+  jurisdiction: WALES
+  body: Employment Tribunals (Wales)
+  cohort: workplace_relations_wrc_et
+  source_family: wales_et
+- url: https://www.senedd.wales/
+  jurisdiction: WALES
+  body: Welsh Parliament (Senedd)
+  cohort: statutes_si_court_rules
+  source_family: senedd
+- url: https://www.ombudsman.wales/
+  jurisdiction: WALES
+  body: Public Services Ombudsman for Wales
+  cohort: civil_litigation_forms
+  source_family: ombudsman_wales
+
+# ---------------------------------------------------------------------------
+# England
+# ---------------------------------------------------------------------------
+- url: https://www.judiciary.uk/
+  jurisdiction: ENGLAND
+  body: HM Courts and Tribunals Service (HMCTS)
+  cohort: court_judgments_tribunal_decisions
+  source_family: judiciary_uk
+- url: https://www.courtserve.net/
+  jurisdiction: ENGLAND
+  body: CourtServe (HMCTS)
+  cohort: civil_litigation_forms
+  source_family: courtserve
+- url: https://www.bailii.org/
+  jurisdiction: UK_WIDE
+  body: BAILII (British and Irish Legal Information Institute)
+  cohort: court_judgments_tribunal_decisions
+  source_family: bailii
+- url: https://www.casemine.com/
+  jurisdiction: UK_WIDE
+  body: ICLR CaseMine
+  cohort: court_judgments_tribunal_decisions
+  source_family: casemine
+- url: https://www.lawsociety.org.uk/
+  jurisdiction: ENGLAND
+  body: Law Society of England & Wales
+  cohort: civil_litigation_forms
+  source_family: law_society_eng_wales
+- url: https://www.barcouncil.org.uk/
+  jurisdiction: ENGLAND
+  body: Bar Council (England & Wales)
+  cohort: civil_litigation_forms
+  source_family: bar_eng_wales
+- url: https://www.legalombudsman.org.uk/
+  jurisdiction: ENGLAND
+  body: Legal Ombudsman
+  cohort: civil_litigation_forms
+  source_family: legal_ombudsman
+- url: https://www.gov.uk/employment-tribunal
+  jurisdiction: ENGLAND
+  body: HMCTS (Employment Tribunals)
+  cohort: workplace_relations_wrc_et
+  source_family: gov_uk_employment_tribunal
+- url: https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service
+  jurisdiction: ENGLAND
+  body: HMCTS
+  cohort: civil_litigation_forms
+  source_family: gov_uk_hmcts
+- url: https://www.nhs.uk/
+  jurisdiction: ENGLAND
+  body: NHS England
+  cohort: hse_nhs_complaints
+  source_family: nhs_uk
+- url: https://www.gmc-uk.org/
+  jurisdiction: UK_WIDE
+  body: General Medical Council (GMC)
+  cohort: medical_malpractice
+  source_family: gmc
+- url: https://www.nice.org.uk/
+  jurisdiction: ENGLAND
+  body: National Institute for Health and Care Excellence (NICE)
+  cohort: medical_malpractice
+  source_family: nice
+- url: https://www.cqc.org.uk/
+  jurisdiction: ENGLAND
+  body: Care Quality Commission (CQC)
+  cohort: hse_nhs_complaints
+  source_family: cqc
+- url: https://resolution.nhs.uk/
+  jurisdiction: ENGLAND
+  body: NHS Resolution
+  cohort: medical_malpractice
+  source_family: nhs_resolution
+- url: https://www.england.nhs.uk/
+  jurisdiction: ENGLAND
+  body: NHS England
+  cohort: hse_nhs_complaints
+  source_family: nhs_england
+- url: https://www.phhc-uk.com/ (coroner)
+  jurisdiction: ENGLAND
+  body: Coroners' Society of England & Wales
+  cohort: court_judgments_tribunal_decisions
+  source_family: coroners_eng_wales
+- url: https://www.judiciary.uk/subject/coroner/
+  jurisdiction: ENGLAND
+  body: HM Coroners (England)
+  cohort: court_judgments_tribunal_decisions
+  source_family: coroners_eng
+
+# ---------------------------------------------------------------------------
+# Crown Dependencies
+# ---------------------------------------------------------------------------
+- url: https://www.gov.je/
+  jurisdiction: JERSEY
+  body: Government of Jersey
+  cohort: statutes_si_court_rules
+  source_family: gov_je
+- url: https://www.gov.gg/
+  jurisdiction: GUERNSEY
+  body: Government of Guernsey
+  cohort: statutes_si_court_rules
+  source_family: gov_gg
+- url: https://www.gov.im/
+  jurisdiction: IOM
+  body: Government of the Isle of Man
+  cohort: statutes_si_court_rules
+  source_family: gov_im
+- url: https://www.jerseylaw.je/
+  jurisdiction: JERSEY
+  body: Jersey Law Commission
+  cohort: statutes_si_court_rules
+  source_family: jersey_law
+- url: https://www.courts.je/
+  jurisdiction: JERSEY
+  body: Royal Court of Jersey
+  cohort: court_judgments_tribunal_decisions
+  source_family: royal_court_jersey
+- url: https://www.guernseyroyalcourt.gg/
+  jurisdiction: GUERNSEY
+  body: Royal Court of Guernsey
+  cohort: court_judgments_tribunal_decisions
+  source_family: royal_court_guernsey
+- url: https://www.courts.im/
+  jurisdiction: IOM
+  body: High Court of Justice of the Isle of Man (Deemsters' Court)
+  cohort: court_judgments_tribunal_decisions
+  source_family: iom_courts
+
+# ---------------------------------------------------------------------------
+# UK-wide cross-cutting
+# ---------------------------------------------------------------------------
+- url: https://www.gov.uk/courts-tribunals
+  jurisdiction: UK_WIDE
+  body: HMCTS (UK-wide)
+  cohort: civil_litigation_forms
+  source_family: gov_uk_courts
+- url: https://www.legislation.gov.uk/
+  jurisdiction: UK_WIDE
+  body: The National Archives
+  cohort: statutes_si_court_rules
+  source_family: legislation_gov_uk
+- url: https://www.gov.uk/government/organisations/legal-aid-agency
+  jurisdiction: ENGLAND
+  body: Legal Aid Agency (England & Wales)
+  cohort: civil_litigation_forms
+  source_family: legal_aid_agency
+- url: https://www.scotland-legalaid.com/
+  jurisdiction: SCOTLAND
+  body: Scottish Legal Aid Board (SLAB)
+  cohort: civil_litigation_forms
+  source_family: slab
+- url: https://www.nilsc.org/
+  jurisdiction: NI
+  body: Northern Ireland Legal Services Commission
+  cohort: civil_litigation_forms
+  source_family: nilsc
+- url: https://www.legalaidboard.ie/
+  jurisdiction: IRELAND
+  body: Legal Aid Board (Ireland)
+  cohort: civil_litigation_forms
+  source_family: legal_aid_board_ie
+
+# ---------------------------------------------------------------------------
+# Garda + PSNI + policing-misconduct cohorts ONLY (per LICENSE.md §5.1(c))
+# ---------------------------------------------------------------------------
+- url: https://www.garda.ie/
+  jurisdiction: IRELAND
+  body: An Garda Síochána
+  cohort: garda_discrimination
+  source_family: garda_official
+- url: https://www.psni.police.uk/
+  jurisdiction: NI
+  body: Police Service of Northern Ireland (PSNI)
+  cohort: garda_discrimination
+  source_family: psni_official
+
+# ---------------------------------------------------------------------------
+# Leabharlann case-study PDFs (read-only context — NOT for automated ingestion)
+# ---------------------------------------------------------------------------
+# The leabharlann gemini_deep_research PDFs are cited as `source_pdf_urls`
+# in the `CompositePilotDossier` record (read-only context) but are NOT
+# ingested via DLT. They are referenced by file path in the FunctionTool
+# output, not by URL. They are explicitly EXCLUDED from the allowlist
+# because they are NOT public-sector sources; they are Gemini Deep
+# Research outputs based on public-sector sources.
+
+# ---------------------------------------------------------------------------
+# End of OSINT allowlist. 80+ entries covering all 7 BLIP v1 cohorts ×
+# 8 sub-nations. Updates MUST go via PR + openspec change.
+# ---------------------------------------------------------------------------

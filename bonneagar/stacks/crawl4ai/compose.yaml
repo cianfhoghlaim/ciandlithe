@@ -1,0 +1,61 @@
+# CIANDLITHE wholesale-copy of cianfhoghlaim/cianfhoghlaim @ main branch.
+# Original: cianfhoghlaim/cianfhoghlaim (per the openspec/changes/ciandlithe-repo-bootstrap-v2/specs/ciandlithe-bootstrap-v2/spec.md).
+# Migrated to ciandlithe: 2026-08-23
+# Licence: BUSL-1.1 (per LICENSE.md)
+#
+version: '3.8'
+
+# Shared configuration for all environments
+x-base-config: &base-config
+  ports:
+    - "11235:11235"  # Gunicorn port
+  env_file:
+    - .llm.env       # API keys (create from .llm.env.example)
+  environment:
+    - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+    - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    - GROQ_API_KEY=${GROQ_API_KEY:-}
+    - TOGETHER_API_KEY=${TOGETHER_API_KEY:-}
+    - MISTRAL_API_KEY=${MISTRAL_API_KEY:-}
+    - GEMINI_API_TOKEN=${GEMINI_API_TOKEN:-}
+    - LLM_PROVIDER=${LLM_PROVIDER:-}  # Optional: Override default provider (e.g., "anthropic/claude-3-opus")
+  volumes:
+    - /dev/shm:/dev/shm  # Chromium performance
+  deploy:
+    resources:
+      limits:
+        memory: 4G
+      reservations:
+        memory: 1G
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:11235/health", "-o", "/dev/null", "-w", "%{http_code}", "|", "grep", "-qE", "^(200|401)$"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 40s
+    # Per openspec/changes/2026-08-21-complete-browserbase-archive-and-crawl4ai-mcp-v1
+    # v0.9.x native MCP endpoints (same port 11235, paths differ):
+    #   SSE:     http://localhost:11235/mcp/sse
+    #   WS:      ws://localhost:11235/mcp/ws
+    #   Schema:  http://localhost:11235/mcp/schema
+    # 7 tools exposed: md, html, screenshot, pdf, execute_js, crawl, ask
+  user: "appuser"
+
+services:
+  crawl4ai:
+    # 1. Default: Pull multi-platform test image from Docker Hub
+    # 2. Override with local image via: IMAGE=local-test docker compose up
+    image: ${IMAGE:-unclecode/crawl4ai:${TAG:-v0.9.2}}
+    
+    # Local build config (used with --build)
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        INSTALL_TYPE: ${INSTALL_TYPE:-default}
+        ENABLE_GPU: ${ENABLE_GPU:-false}
+    
+    # Inherit shared config
+    <<: *base-config

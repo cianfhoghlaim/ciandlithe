@@ -1,0 +1,123 @@
+# CIANDLITHE build of stagehand stack. Original: n/a (new build). Licence: BUSL-1.1 (per LICENSE.md)
+#
+# =============================================================================
+# STAGEHAND - Open-source Stagehand + Headless Chromium (bunchloch)
+# =============================================================================
+# Stagehand (https://stagehand.dev/) is a browser automation framework that
+# uses an LLM to drive a browser via Chrome DevTools Protocol. The open-source
+# variant runs against a self-hosted Chromium instance; the commercial
+# Browserbase variant uses Browserbase's cloud fleet.
+#
+# This stack wires the open-source variant:
+#   * `chromium`  - headless Chrome with CDP enabled on port 9222
+#   * `stagehand` - Node.js runtime hosting the Stagehand HTTP API on :3000
+#
+# Stagehand reads secrets (OPENAI_API_KEY etc.) from Locket-injected env vars
+# via the sidecar.yaml overlay. Local dev can also drop a `.env.local` and use
+# the bare compose.yaml without sidecar.yaml.
+#
+# USAGE:
+#   Production:  docker compose -f compose.yaml -f sidecar.yaml up -d
+#   Development: docker compose -f compose.yaml up --env-file .env.local
+# =============================================================================
+
+name: stagehand
+
+services:
+  # ---------------------------------------------------------------------------
+  # CHROMIUM - headless Chrome with Chrome DevTools Protocol
+  # ---------------------------------------------------------------------------
+  chromium:
+    image: chromedp/headless-shell:stable
+    container_name: stagehand-chromium
+    restart: unless-stopped
+    command:
+      - --headless=new
+      - --no-sandbox
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+    expose:
+      - "9222"
+    volumes:
+      - /dev/shm:/dev/shm
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9222/json/version | grep -q 'webSocketDebuggerUrl'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - stagehand-net
+
+  # ---------------------------------------------------------------------------
+  # STAGEHAND - LLM-driven browser automation HTTP API (port 3000)
+  # ---------------------------------------------------------------------------
+  stagehand:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ciandlithe/stagehand:local
+    container_name: stagehand
+    restart: unless-stopped
+    depends_on:
+      chromium:
+        condition: service_healthy
+      # The `locket` dependency is added by sidecar.yaml when the sidecar
+      # overlay is applied. Keeping it out of the bare compose.yaml means
+      # `docker compose up` works for local dev without the sidecar.
+    ports:
+      - "3000:3000"
+    # Secrets come from the Locket-injected /run/secrets/locket/secrets.env
+    # when running with sidecar.yaml (production). For local dev, set the
+    # env vars directly in your shell (e.g. `OPENAI_API_KEY=sk-... docker
+    # compose up`) or via `docker compose --env-file .env.local up`.
+    environment:
+      # CDP endpoint (the chromium container)
+      - BROWSER_WS_ENDPOINT=ws://chromium:9222
+      # Optional override for the default Stagehand model
+      - STAGEHAND_MODEL=${STAGEHAND_MODEL:-gpt-4o}
+      # LLM API keys come from the Locket-injected /run/secrets/locket/secrets.env
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+      - BROWSERBASE_API_KEY=${BROWSERBASE_API_KEY:-}
+      - BROWSERBASE_PROJECT_ID=${BROWSERBASE_PROJECT_ID:-}
+      # Server config
+      - STAGEHAND_HTTP_PORT=3000
+      - STAGEHAND_LOG_LEVEL=${STAGEHAND_LOG_LEVEL:-info}
+      - NODE_ENV=production
+    volumes:
+      - stagehand-cache:/root/.cache/stagehand
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - stagehand-net
+
+volumes:
+  stagehand-cache:
+    driver: local
+
+networks:
+  stagehand-net:
+    name: stagehand-net
+    driver: bridge

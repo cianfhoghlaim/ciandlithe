@@ -1,0 +1,14 @@
+# CIANDLITHE build of locket stack. Original: n/a (new build). Licence: BUSL-1.1 (per LICENSE.md)
+#
+# Pangolin private-resource blueprint (generated from pangolin.yaml label form)
+# See: https://docs.pangolin.net/manage/blueprints
+private-resources:
+  locket:
+    name: "Locket Secret-Injection API"
+    mode: "http"
+    destination: "locket"
+    destination-port: 9090
+    full-domain: "locket.ciandlithe.ie"
+    protocol: "http"
+    roles:
+      - "Admin"

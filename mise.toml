@@ -1,0 +1,276 @@
+# mise.toml — Ciandlithe
+# Post-bootstrap wholesale-copy from cianfhoghlaim + cianchosaint.
+#
+# SECTIONS:
+#   1. core — dev env (sync + install + lint + test + format)
+#   2. lint — openspec + licence + drift + skills
+#   3. sync — knowledge sync loop (paths + ccc + cognee + skills + mcp + drift)
+#   4. openspec — validate + archive + list + view
+#   5. ciandlithe:provider — 4-tier provider chain health
+#   6. ciandlithe:browser-tool — BrowserToolRouter health
+#   7. ciandlithe:osint — OSINT allowlist audit
+#   8. ciandlithe:blip:v1 — British Isles Litigation Pipeline milestones
+#   9. ciandlithe:ccc — CocoIndex Code indexing (init / index / search)
+#  10. ciandlithe:web — per-persona web app health
+#  11. test — smoke tests
+#
+# See openspec/changes/ciandlithe-repo-foundation-v1/specs/ciandlithe-pipeline/spec.md
+# Requirement: Slimmed mise.toml (~25 tasks, mirrors cianchosaint's task surface).
+
+# mise.toml_format (set by mise at runtime)
+
+_.python.compile = true
+
+
+# ---------------------------------------------------------------------------
+# 1. core — dev env (sync + install + lint + test + format)
+# ---------------------------------------------------------------------------
+
+[tasks.core]
+description = "Core dev env: sync + install + lint + test + format"
+run = "mise run sync:all && mise run lint:openspec && mise run test:smoke"
+
+
+# ---------------------------------------------------------------------------
+# 2. lint — openspec + licence + drift + skills
+# ---------------------------------------------------------------------------
+
+[tasks.lint]
+description = "Lint: openspec + licence + drift + skills"
+run = [
+  "mise run openspec:validate-all",
+  "mise run lint:license",
+]
+
+[tasks."lint:license"]
+description = "Audit OSINT allowlist + British-Isles body check (uses ciandlithe OSINT allowlist at dlt_sources/ciandlithe/common/osint_allowlist.yaml)"
+run = "python3 scripts/lint_license.py"
+
+[tasks."lint:drift-docs"]
+description = "Validate every AGENTS.md number claim against ground truth"
+run = "python3 scripts/lint_drift_docs.py"
+
+[tasks."lint:skills"]
+description = "Validate every .agents/skills/*/SKILL.md frontmatter (name + description ≤1024 chars)"
+run = "python3 scripts/lint_skills.py"
+
+[tasks."lint:openspec"]
+description = "Validate every openspec change + every canonical spec (--strict)"
+run = "openspec validate --all --strict"
+
+
+# ---------------------------------------------------------------------------
+# 3. sync — knowledge sync loop (per the 14-layer knowledge sync loop spec)
+# ---------------------------------------------------------------------------
+
+[tasks."sync:all"]
+description = "14-layer knowledge sync loop: paths + ccc + cognee + skills + mcp + drift-docs + baml + openspec + dlt + cocoindex-flows + agents + lint + deploy + test"
+run = [
+  "mise run sync:paths",
+  "mise run sync:ccc",
+  "mise run sync:cognee",
+  "mise run sync:skills",
+  "mise run sync:mcp",
+  "mise run sync:drift-docs",
+  "mise run sync:baml",
+  "mise run openspec:validate-all",
+  "mise run sync:dlt",
+  "mise run sync:cocoindex-flows",
+  "mise run sync:agents",
+  "mise run lint",
+  "mise run sync:deploy",
+  "mise run test:smoke",
+]
+
+[tasks."sync:paths"]
+description = "Pre-v7 path drift cleanup (no-op post-v7)"
+run = "echo 'paths: OK (post-v7)'"
+
+[tasks."sync:ccc"]
+description = "CocoIndex Code semantic code search reindex"
+run = "bun run ccc:index"
+
+[tasks."sync:cognee"]
+description = "Cognee knowledge graph refresh over docs/"
+run = "uv run python scripts/sync_cognee.py"
+
+[tasks."sync:skills"]
+description = "Agent skill validation"
+run = "mise run lint:skills"
+
+[tasks."sync:mcp"]
+description = "MCP server inventory validation (every enabled: true entry has a corresponding mcp:smoke:<name> task)"
+run = "uv run python scripts/lint_mcp.py"
+
+[tasks."sync:drift-docs"]
+description = "AGENTS.md number claim validation"
+run = "mise run lint:drift-docs"
+
+[tasks."sync:baml"]
+description = "BAML extraction schema validation"
+run = "uv run python scripts/sync_baml.py"
+
+[tasks."sync:dlt"]
+description = "DLT source URL allowlist + British-Isles body check"
+run = "mise run lint:license"
+
+[tasks."sync:cocoindex-flows"]
+description = "CocoIndex flow validation"
+run = "uv run python scripts/sync_cocoindex_flows.py"
+
+[tasks."sync:agents"]
+description = "12-agent fleet registry validation"
+run = "uv run python scripts/sync_agents.py"
+
+[tasks."sync:deploy"]
+description = "IaC stack validation (13 compose stacks)"
+run = "bash scripts/sync_deploy.sh"
+
+
+# ---------------------------------------------------------------------------
+# 4. openspec — validate + archive + list + view
+# ---------------------------------------------------------------------------
+
+[tasks."openspec:validate-all"]
+description = "Validate every openspec change + every canonical spec (--strict)"
+run = "openspec validate --all --strict"
+
+[tasks."openspec:validate"]
+description = "Validate one openspec change (--strict)"
+usage = '''
+arg "<change-id>" help="The openspec change id to validate"
+'''
+run = "openspec validate $argv --strict"
+
+[tasks."openspec:archive"]
+description = "Archive one deployed openspec change"
+usage = '''
+arg "<change-id>" help="The openspec change id to archive"
+'''
+run = "openspec archive $argv --yes"
+
+[tasks."openspec:list"]
+description = "List all canonical specs + all pending changes"
+run = "openspec list --specs && openspec list"
+
+[tasks."openspec:view"]
+description = "Interactive OpenSpec dashboard"
+run = "openspec view"
+
+
+# ---------------------------------------------------------------------------
+# 5. ciandlithe:provider — 4-tier provider chain health
+# ---------------------------------------------------------------------------
+
+[tasks."ciandlithe:provider:health-check"]
+description = "Ping each of the 4 providers in the ModelProviderRouter chain; emit a health table"
+run = "python3 -m baml_src._shared.provider_health_check"
+
+[tasks."ciandlithe:provider:osint-audit"]
+description = "Verify every DLT source URL is in the OSINT allowlist + every allowlist entry points at a British-Isles body"
+run = "python3 -m dlt_sources.ciandlithe.common.osint_audit"
+
+
+# ---------------------------------------------------------------------------
+# 6. ciandlithe:browser-tool — BrowserToolRouter health
+# ---------------------------------------------------------------------------
+
+[tasks."ciandlithe:browser-tool:health-check"]
+description = "Verify each browser tool (Stagehand + Crawl4AI + changedetection) is reachable"
+run = "python3 -m agents.meaisinfhoghlaim.firecrawl_mcp.health_check"
+
+
+# ---------------------------------------------------------------------------
+# 7. ciandlithe:osint — OSINT allowlist audit
+# ---------------------------------------------------------------------------
+
+[tasks."ciandlithe:osint:audit"]
+description = "Audit the OSINT allowlist (per `dlt_sources/ciandlithe/common/osint_allowlist.yaml`)"
+run = "python3 -m dlt_sources.ciandlithe.common.osint_audit"
+
+[tasks."ciandlithe:osint:case-study-load"]
+description = "Load + parse the 7 leabharlann case-study PDFs (read-only context) + emit a per-cohort summary"
+run = "python3 -m dlt_sources.ciandlithe.cross.case_study_loader"
+
+
+# ---------------------------------------------------------------------------
+# 8. ciandlithe:blip:v1 — British Isles Litigation Pipeline milestones
+# ---------------------------------------------------------------------------
+
+[tasks."ciandlithe:blip:v1:m1"]
+description = "BLIP v1 milestone gate m1: Republic of Ireland (7 cohorts minimum)"
+run = [
+  "mise run openspec:validate-all",
+  "python3 -m dlt_sources.ciandlithe.ireland.pipeline",
+]
+
+[tasks."ciandlithe:blip:v1:m2"]
+description = "BLIP v1 milestone gate m2: United Kingdom (NI + Scotland + Wales + England = 28 cohorts)"
+run = [
+  "mise run openspec:validate-all",
+  "python3 -m dlt_sources.ciandlithe.uk.pipeline",
+]
+
+[tasks."ciandlithe:blip:v1:m3"]
+description = "BLIP v1 milestone gate m3: Crown Dependencies (Jersey + Guernsey + IoM = 21 cohorts)"
+run = [
+  "mise run openspec:validate-all",
+  "python3 -m dlt_sources.ciandlithe.crown_dependencies.pipeline",
+]
+
+[tasks."ciandlithe:blip:v1:ga"]
+description = "BLIP v1 milestone gate v1 GA: all 6-8 jurisdictions (~50 cohorts)"
+run = [
+  "mise run openspec:validate-all",
+  "mise run ciandlithe:blip:v1:m1",
+  "mise run ciandlithe:blip:v1:m2",
+  "mise run ciandlithe:blip:v1:m3",
+]
+
+[tasks."ciandlithe:composite-pilot:v1"]
+description = "Composite pilot: 7 FunctionTools + 7 BAML extractions + 7 cross-referenced dossiers (per `docs/case-study/composite-pilot.md`)"
+run = [
+  "mise run openspec:validate-all",
+  "python3 -m agents.ciandlithe.tools.composite_pilot",
+]
+
+
+# ---------------------------------------------------------------------------
+# 9. ciandlithe:ccc — CocoIndex Code indexing
+# ---------------------------------------------------------------------------
+
+[tasks."ciandlithe:ccc:init"]
+description = "First-time CCC setup: creates .cocoindex_code/settings.yml + .cocoindex_code/guides.yml"
+run = "bash scripts/init_ccc.sh"
+
+[tasks."ciandlithe:ccc:index"]
+description = "Rebuild the CCC semantic code search index over the ciandlithe codebase"
+run = "bun run ccc:index"
+
+[tasks."ciandlithe:ccc:search"]
+description = "Semantic search over the ciandlithe codebase (e.g. 'British Isles litigation')"
+run = "bun run ccc:search $argv"
+usage = '''
+arg "<query>" help="The semantic search query"
+'''
+
+
+# ---------------------------------------------------------------------------
+# 10. ciandlithe:web — per-persona web app health
+# ---------------------------------------------------------------------------
+
+[tasks."ciandlithe:web:list"]
+description = "List all 7 per-persona web apps"
+run = "ls web/apps/ | grep ciandlithe-"
+
+
+# ---------------------------------------------------------------------------
+# 11. test — smoke tests
+# ---------------------------------------------------------------------------
+
+[tasks."test:smoke"]
+description = "Smoke test: every openspec change validates + every spec parses"
+run = [
+  "mise run openspec:validate-all",
+  "python3 -m pytest tests/smoke/ -v",
+]

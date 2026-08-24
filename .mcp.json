@@ -1,0 +1,68 @@
+{
+  "mcpServers": {
+    "dlt-workspace-mcp": {
+      "command": "uv",
+      "args": [
+        "run",
+        "dlthub",
+        "ai",
+        "mcp",
+        "--stdio"
+      ]
+    },
+    "firecrawl": {
+      "command": "bunx",
+      "args": [
+        "-y",
+        "firecrawl-mcp"
+      ],
+      "env": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+      }
+    },
+    "crawl4ai": {
+      "url": "https://crawl4ai-mcp.cianfhoghlaim.ie/sse",
+      "headers": {
+        "Authorization": "Bearer ${CRAWL4AI_JWT_SECRET}"
+      }
+    },
+    "motherduck": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-motherduck",
+        "--db-path",
+        ":memory:",
+        "--read-write",
+        "--allow-switch-databases"
+      ],
+      "env": {
+        "MOTHERDUCK_TOKEN": "infisical://dev-baile/motherduck/token"
+      }
+    },
+    "chrome": {
+      "command": "bunx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp"
+      ]
+    },
+    "cocoindex-code": {
+      "command": "ccc",
+      "args": [
+        "mcp"
+      ]
+    },
+    "huggingface": {
+      "url": "https://huggingface.co/mcp?login"
+    },
+    "design-system": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "web/apps/cianfhoghlaim-leaving-cert/apps/web/packages/mcp/design-system-server.py",
+        "--stdio"
+      ]
+    }
+  }
+}

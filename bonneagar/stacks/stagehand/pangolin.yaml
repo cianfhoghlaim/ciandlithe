@@ -1,0 +1,29 @@
+# CIANDLITHE build of stagehand stack. Original: n/a (new build). Licence: BUSL-1.1 (per LICENSE.md)
+#
+# =============================================================================
+# STAGEHAND - Pangolin Private Resource (6-label shape)
+# =============================================================================
+# Per the Pangolin 6-Label Pattern requirement in infrastructure-stacks/spec.md:
+#   1. name                - unique slug
+#   2. mode                - http / tcp / udp
+#   3. full-domain         - the FQDN
+#   4. destination-port    - the container port
+#   5. protocol            - http / https
+#   6. roles[0]            - the Traefik role
+#
+# Stagehand exposes a single HTTP API on port 3000 (the Stagehand HTTP API).
+# SSE streaming for live LLM-driven execution rides the same HTTP/1.1
+# connection (no separate ws upgrade needed for the public surface).
+# =============================================================================
+
+pangolin:
+  private-resources:
+    stagehand:
+      name: "Stagehand Browser Automation"
+      mode: "http"
+      full-domain: "stagehand.ciandlithe.ie"
+      destination: "stagehand"
+      destination-port: 3000
+      protocol: "http"
+      roles:
+        - "Member"

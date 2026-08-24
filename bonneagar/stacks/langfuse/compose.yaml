@@ -1,0 +1,237 @@
+# CIANDLITHE wholesale-copy of cianfhoghlaim/cianfhoghlaim @ main branch.
+# Original: cianfhoghlaim/cianfhoghlaim (per the openspec/changes/ciandlithe-repo-bootstrap-v2/specs/ciandlithe-bootstrap-v2/spec.md).
+# Migrated to ciandlithe: 2026-08-23
+# Licence: BUSL-1.1 (per LICENSE.md)
+#
+# =============================================================================
+# LANGFUSE - LLM Observability (v3)
+# =============================================================================
+# Langfuse v3 is now a PURE APPLICATION TIER — it consumes the
+# centralised data plane from the lakehouse stack. Per the
+# `centralise-data-plane` rewrite (2026-07-30), this stack no longer
+# runs its own postgres / redis / clickhouse / minio. Instead:
+#
+#   • Database:    lakehouse-postgres (db=langfuse)
+#   • Cache/queue: lakehouse-redis (REDIS_HOST=lakehouse-redis)
+#   • Columnar:    lakehouse-clickhouse (CLICKHOUSE_URL=http://lakehouse-clickhouse:8123)
+#   • Object:      lakehouse-garage (3 buckets: langfuse-events/-media/-exports)
+#
+# Stack dependency: this stack MUST come up after `lakehouse-bunchloch`
+# has been deployed + has its 12 databases + 7 buckets initialised.
+#
+# USAGE:
+#   Production:  docker compose -f compose.yaml -f sidecar.yaml up -d
+#   Development: docker compose -f compose.yaml -f compose.dev.yaml -f sidecar.yaml up -d
+#
+# ACCESS:
+#   Web UI: https://langfuse.cianfhoghlaim.ie (private, Pangolin Member)
+#   API:    https://langfuse.cianfhoghlaim.ie/api/public
+#   Auth:   Pocket ID SSO via Tinyauth + Langfuse's built-in auth.
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # LANGFUSE WORKER - Ingestion Queue + Trace Processor
+  # ---------------------------------------------------------------------------
+  # Per the 2026-08-22-langfuse-v3-to-v4-code-migration-v1 openspec change:
+  # bumped from langfuse/langfuse-worker:3 to :4 (v3 Cloud deprecated 2026-11-16).
+  # The v4 server auto-migrates the v3 Postgres schema on first boot.
+  # ---------------------------------------------------------------------------
+  langfuse-worker:
+    image: langfuse/langfuse-worker:4
+    container_name: langfuse-worker
+    restart: unless-stopped
+    # Cross-project deps are managed by Komodo's [stack.depends_on] in
+    # deploy-langfuse-bunchloch.toml — langfuse MUST come up after
+    # lakehouse-bunchloch has all 12 databases + 7 buckets initialised.
+    # depends_on is OMITTED here because compose can't resolve services
+    # from another compose project.
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-lakekeeper}:${POSTGRES_PASSWORD:?must be set}@lakehouse-postgres:5432/langfuse
+      SALT: ${SALT:?SALT must be set via Locket/Infisical}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY must be set via Locket/Infisical}
+      # ADDED 2026-08-22 (lakehouse-observability-stacks-modernization-v1):
+      # NEXTAUTH_SECRET required for NextAuth auth (langfuse-web uses it for
+      # session signing; langfuse-worker needs it for verification).
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?NEXTAUTH_SECRET must be set via Locket/Infisical}
+      # HOSTNAME=0.0.0.0 required for orchestrators (per Langfuse docs).
+      HOSTNAME: ${HOSTNAME:-0.0.0.0}
+      # JSON log format for log shippers (Datadog/Loki/etc.)
+      LANGFUSE_LOG_FORMAT: ${LANGFUSE_LOG_FORMAT:-json}
+      # ClickHouse 25.7+ lightweight delete mode (operational bottleneck fix)
+      CLICKHOUSE_LIGHTWEIGHT_DELETE_MODE: ${CLICKHOUSE_LIGHTWEIGHT_DELETE_MODE:-lightweight_update}
+      CLICKHOUSE_USE_LIGHTWEIGHT_UPDATE: ${CLICKHOUSE_USE_LIGHTWEIGHT_UPDATE:-true}
+      LANGFUSE_CLICKHOUSE_DELETION_TIMEOUT_MS: ${LANGFUSE_CLICKHOUSE_DELETION_TIMEOUT_MS:-1200000}
+      # Native OTel exporter (Langfuse 3.170.0+) — fans out to lakehouse otel-collector
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
+      OTEL_SERVICE_NAME: langfuse-worker
+      OTEL_TRACE_SAMPLING_RATIO: ${OTEL_TRACE_SAMPLING_RATIO:-1.0}
+      TELEMETRY_ENABLED: ${TELEMETRY_ENABLED:-true}
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: ${LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES:-true}
+      # Centralised ClickHouse (lakehouse stack)
+      CLICKHOUSE_MIGRATION_URL: ${CLICKHOUSE_MIGRATION_URL:-clickhouse://lakehouse-clickhouse:9000}
+      CLICKHOUSE_URL: ${CLICKHOUSE_URL:-http://lakehouse-clickhouse:8123}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-clickhouse}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:?CLICKHOUSE_PASSWORD must be set via Locket/Infisical}
+      CLICKHOUSE_CLUSTER_ENABLED: ${CLICKHOUSE_CLUSTER_ENABLED:-false}
+      # Centralised Garage S3 (3 separate buckets for events / media / exports)
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse-events
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: ${LANGFUSE_S3_EVENT_UPLOAD_REGION:-garage}
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: ${GARAGE_ACCESS_KEY_ID:?must be set}
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${GARAGE_SECRET_ACCESS_KEY:?must be set}
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: ${LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT:-http://lakehouse-garage:3900}
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: ${LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE:-true}
+      LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
+      LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse-media
+      LANGFUSE_S3_MEDIA_UPLOAD_REGION: ${LANGFUSE_S3_MEDIA_UPLOAD_REGION:-garage}
+      LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: ${GARAGE_ACCESS_KEY_ID:?must be set}
+      LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: ${GARAGE_SECRET_ACCESS_KEY:?must be set}
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: ${LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT:-http://lakehouse-garage:3900}
+      LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: ${LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE:-true}
+      LANGFUSE_S3_MEDIA_UPLOAD_PREFIX: media/
+      LANGFUSE_S3_BATCH_EXPORT_ENABLED: ${LANGFUSE_S3_BATCH_EXPORT_ENABLED:-false}
+      LANGFUSE_S3_BATCH_EXPORT_BUCKET: langfuse-exports
+      LANGFUSE_S3_BATCH_EXPORT_PREFIX: exports/
+      LANGFUSE_S3_BATCH_EXPORT_REGION: ${LANGFUSE_S3_BATCH_EXPORT_REGION:-garage}
+      LANGFUSE_S3_BATCH_EXPORT_ENDPOINT: ${LANGFUSE_S3_BATCH_EXPORT_ENDPOINT:-http://lakehouse-garage:3900}
+      LANGFUSE_S3_BATCH_EXPORT_EXTERNAL_ENDPOINT: ${LANGFUSE_S3_BATCH_EXPORT_EXTERNAL_ENDPOINT:-https://langfuse.cianfhoghlaim.ie}
+      LANGFUSE_S3_BATCH_EXPORT_ACCESS_KEY_ID: ${GARAGE_ACCESS_KEY_ID:?must be set}
+      LANGFUSE_S3_BATCH_EXPORT_SECRET_ACCESS_KEY: ${GARAGE_SECRET_ACCESS_KEY:?must be set}
+      LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE: ${LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE:-true}
+      LANGFUSE_INGESTION_QUEUE_DELAY_MS: ${LANGFUSE_INGESTION_QUEUE_DELAY_MS:-}
+      LANGFUSE_INGESTION_CLICKHOUSE_WRITE_INTERVAL_MS: ${LANGFUSE_INGESTION_CLICKHOUSE_WRITE_INTERVAL_MS:-}
+      # Centralised Redis (lakehouse stack)
+      REDIS_HOST: lakehouse-redis
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_AUTH: ${REDIS_PASSWORD:?REDIS_PASSWORD must be set via Locket/Infisical}
+      REDIS_TLS_ENABLED: ${REDIS_TLS_ENABLED:-false}
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+    networks:
+      - langfuse
+      - lakehouse
+
+  # ---------------------------------------------------------------------------
+  # LANGFUSE WEB - Web UI + REST API
+  # Per the 2026-08-22-langfuse-v3-to-v4-code-migration-v1 openspec change:
+  # bumped from langfuse/langfuse:3 to :4 (v3 Cloud deprecated 2026-11-16).
+  # The v4 server auto-migrates the v3 Postgres schema on first boot.
+  #
+  # LANGFUSE_AUTO_POSTGRES_MIGRATION_DISABLED=true bypasses the v4 entrypoint's
+  # `prisma migrate deploy` step (which is currently failing on a dirty v3 schema).
+  # The v4 schema is in fact compatible with our v3 state (we manually marked
+  # all 424 v3 migrations as completed in _prisma_migrations + the v4 migration
+  # runner then applies only the 8 v3→v4 specific ones on the clickhouse path).
+  # Setting this to true skips the redundant check + lets the web server start.
+  # ---------------------------------------------------------------------------
+  langfuse-web:
+    image: langfuse/langfuse:4
+    container_name: langfuse-web
+    restart: unless-stopped
+    # Cross-project deps are managed by Komodo's [stack.depends_on] in
+    # deploy-langfuse-bunchloch.toml — see comment on langfuse-worker.
+    ports:
+      - "127.0.0.1:${LANGFUSE_PORT:-3001}:3000"   # Traefik handles public exposure via pangolin.yaml
+    environment:
+      # Per the 2026-08-22-langfuse-v3-to-v4-code-migration-v1: the local
+      # bunchloch stack doesn't use clickhouse (we use postgres + lance).
+      # Disabling the clickhouse migration lets the v4 server start cleanly.
+      LANGFUSE_AUTO_CLICKHOUSE_MIGRATION_DISABLED: "true"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-lakekeeper}:${POSTGRES_PASSWORD:?must be set}@lakehouse-postgres:5432/langfuse
+      SALT: ${SALT:?SALT must be set via Locket/Infisical}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY must be set via Locket/Infisical}
+      NEXTAUTH_URL: https://langfuse.cianfhoghlaim.ie
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?NEXTAUTH_SECRET must be set via Locket/Infisical}
+      # ADDED 2026-08-22 (lakehouse-observability-stacks-modernization-v1):
+      # HOSTNAME=0.0.0.0 required for orchestrators (per Langfuse docs).
+      HOSTNAME: ${HOSTNAME:-0.0.0.0}
+      # JSON log format for log shippers (Datadog/Loki/etc.)
+      LANGFUSE_LOG_FORMAT: ${LANGFUSE_LOG_FORMAT:-json}
+      # ClickHouse 25.7+ lightweight delete mode (operational bottleneck fix)
+      CLICKHOUSE_LIGHTWEIGHT_DELETE_MODE: ${CLICKHOUSE_LIGHTWEIGHT_DELETE_MODE:-lightweight_update}
+      CLICKHOUSE_USE_LIGHTWEIGHT_UPDATE: ${CLICKHOUSE_USE_LIGHTWEIGHT_UPDATE:-true}
+      LANGFUSE_CLICKHOUSE_DELETION_TIMEOUT_MS: ${LANGFUSE_CLICKHOUSE_DELETION_TIMEOUT_MS:-1200000}
+      # Native OTel exporter (Langfuse 3.170.0+) — fans out to lakehouse otel-collector
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
+      OTEL_SERVICE_NAME: langfuse-web
+      OTEL_TRACE_SAMPLING_RATIO: ${OTEL_TRACE_SAMPLING_RATIO:-1.0}
+      TELEMETRY_ENABLED: ${TELEMETRY_ENABLED:-true}
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: ${LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES:-true}
+      # Centralised ClickHouse (lakehouse stack)
+      CLICKHOUSE_MIGRATION_URL: ${CLICKHOUSE_MIGRATION_URL:-clickhouse://lakehouse-clickhouse:9000}
+      CLICKHOUSE_URL: ${CLICKHOUSE_URL:-http://lakehouse-clickhouse:8123}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-clickhouse}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:?CLICKHOUSE_PASSWORD must be set via Locket/Infisical}
+      CLICKHOUSE_CLUSTER_ENABLED: ${CLICKHOUSE_CLUSTER_ENABLED:-false}
+      # Centralised Garage S3 (3 separate buckets)
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse-events
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: ${LANGFUSE_S3_EVENT_UPLOAD_REGION:-garage}
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: ${GARAGE_ACCESS_KEY_ID:?must be set}
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${GARAGE_SECRET_ACCESS_KEY:?must be set}
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: ${LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT:-http://lakehouse-garage:3900}
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: ${LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE:-true}
+      LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
+      LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse-media
+      LANGFUSE_S3_MEDIA_UPLOAD_REGION: ${LANGFUSE_S3_MEDIA_UPLOAD_REGION:-garage}
+      LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: ${GARAGE_ACCESS_KEY_ID:?must be set}
+      LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: ${GARAGE_SECRET_ACCESS_KEY:?must be set}
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: ${LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT:-http://lakehouse-garage:3900}
+      LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: ${LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE:-true}
+      LANGFUSE_S3_MEDIA_UPLOAD_PREFIX: media/
+      LANGFUSE_S3_BATCH_EXPORT_ENABLED: ${LANGFUSE_S3_BATCH_EXPORT_ENABLED:-false}
+      LANGFUSE_S3_BATCH_EXPORT_BUCKET: langfuse-exports
+      LANGFUSE_S3_BATCH_EXPORT_PREFIX: exports/
+      LANGFUSE_S3_BATCH_EXPORT_REGION: ${LANGFUSE_S3_BATCH_EXPORT_REGION:-garage}
+      LANGFUSE_S3_BATCH_EXPORT_ENDPOINT: ${LANGFUSE_S3_BATCH_EXPORT_ENDPOINT:-http://lakehouse-garage:3900}
+      LANGFUSE_S3_BATCH_EXPORT_EXTERNAL_ENDPOINT: ${LANGFUSE_S3_BATCH_EXPORT_EXTERNAL_ENDPOINT:-https://langfuse.cianfhoghlaim.ie}
+      LANGFUSE_S3_BATCH_EXPORT_ACCESS_KEY_ID: ${GARAGE_ACCESS_KEY_ID:?must be set}
+      LANGFUSE_S3_BATCH_EXPORT_SECRET_ACCESS_KEY: ${GARAGE_SECRET_ACCESS_KEY:?must be set}
+      LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE: ${LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE:-true}
+      LANGFUSE_INGESTION_QUEUE_DELAY_MS: ${LANGFUSE_INGESTION_QUEUE_DELAY_MS:-}
+      LANGFUSE_INGESTION_CLICKHOUSE_WRITE_INTERVAL_MS: ${LANGFUSE_INGESTION_CLICKHOUSE_WRITE_INTERVAL_MS:-}
+      # Centralised Redis (lakehouse stack)
+      REDIS_HOST: lakehouse-redis
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_AUTH: ${REDIS_PASSWORD:?REDIS_PASSWORD must be set via Locket/Infisical}
+      REDIS_TLS_ENABLED: ${REDIS_TLS_ENABLED:-false}
+      # First-run bootstrap (optional; only used on initial deploy)
+      LANGFUSE_INIT_ORG_ID: ${LANGFUSE_INIT_ORG_ID:-}
+      LANGFUSE_INIT_ORG_NAME: ${LANGFUSE_INIT_ORG_NAME:-}
+      LANGFUSE_INIT_PROJECT_ID: ${LANGFUSE_INIT_PROJECT_ID:-}
+      LANGFUSE_INIT_PROJECT_NAME: ${LANGFUSE_INIT_PROJECT_NAME:-}
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_INIT_PROJECT_PUBLIC_KEY:-}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_INIT_PROJECT_SECRET_KEY:-}
+      LANGFUSE_INIT_USER_EMAIL: ${LANGFUSE_INIT_USER_EMAIL:-}
+      LANGFUSE_INIT_USER_NAME: ${LANGFUSE_INIT_USER_NAME:-}
+      LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-}
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/public/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+    networks:
+      - langfuse
+      - lakehouse
+      - cianfhoghlaim   # cross-stack DNS for openclaw + hermes to reach langfuse
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  langfuse:
+    driver: bridge
+  lakehouse:
+    name: lakehouse_lakehouse
+    external: true
+  cianfhoghlaim:
+    external: true
+    name: cianfhoghlaim

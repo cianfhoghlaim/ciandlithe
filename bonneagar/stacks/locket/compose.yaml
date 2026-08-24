@@ -1,0 +1,100 @@
+# CIANDLITHE build of locket stack. Original: n/a (new build). Licence: BUSL-1.1 (per LICENSE.md)
+#
+# =============================================================================
+# LOCKET - Secret-Injection Sidecar (the canonical implementation)
+# =============================================================================
+# Locket is the reference implementation of the "Infisical at runtime" pattern
+# used by every other stack in Bonneagar. It is a Python-based sidecar that:
+#   1. Reads `infisical://dev-baile/<item>/<key>` references from
+#      /templates/secrets.env (mounted from the consumer stack's secrets.env)
+#   2. Resolves each reference via the Infisical API using Universal Auth
+#   3. Writes the resolved secrets to a tmpfs at
+#      /run/secrets/locket/secrets.env (consumed by parent containers)
+#   4. Exposes an HTTP API on :9090 for parent containers that prefer
+#      pull-based secret retrieval over the shared-tmpfs model
+#
+# USAGE (typical — as a sidecar to another stack):
+#   docker compose -f <consumer>/compose.yaml -f <consumer>/sidecar.yaml up -d
+#
+# USAGE (standalone — to verify the Locket API):
+#   docker compose -f compose.yaml up -d
+#   curl http://localhost:9090/health
+#   curl http://localhost:9090/ready
+# =============================================================================
+
+name: locket
+
+services:
+  # ---------------------------------------------------------------------------
+  # LOCKET - Python-based secret-injection sidecar
+  # ---------------------------------------------------------------------------
+  locket:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ciandlithe/locket:local
+    container_name: locket
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    # All env vars come from the `environment:` block below (with defaults
+    # for non-secret knobs). Secrets come from the docker secret or the
+    # INFISICAL_CLIENT_ID env var. For local dev, pass `--env-file .env.local`
+    # on the CLI; the bare `docker compose config` does not need it.
+    environment:
+      # --- Locket HTTP API -----------------------------------------------------
+      - LOCKET_BIND_ADDR=0.0.0.0:9090
+      - LOCKET_LOG_LEVEL=${LOCKET_LOG_LEVEL:-info}
+      - LOCKET_MODE=${LOCKET_MODE:-watch}
+      # --- Infisical backend ---------------------------------------------------
+      - INFISICAL_URL=${INFISICAL_URL:-http://infisical-backend:8080}
+      - INFISICAL_ENVIRONMENT=${INFISICAL_ENVIRONMENT:-dev}
+      - INFISICAL_PROJECT_ID=${INFISICAL_PROJECT_ID:-}
+      - INFISICAL_CLIENT_ID=${INFISICAL_CLIENT_ID:-}
+      # Client secret comes from the docker-secret, never env
+      - LOCKET_FALLBACK_FILE=/run/secrets/locket/env-fallback.env
+    user: "65532:65532"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    # /run/secrets/locket is mounted via the `stack-secrets` named volume
+    # (declared below as a tmpfs with mode 700 uid=65532) — the same mount
+    # is shared with the parent container when Locket runs as a sidecar.
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    command:
+      - "--provider=infisical"
+      - "--infisical-client-id=$${INFISICAL_CLIENT_ID}"
+      - "--infisical-client-secret=file:/run/secrets/infisical_secret"
+      - "--infisical-default-environment=$${INFISICAL_ENVIRONMENT:-dev}"
+      - "--infisical-default-project-id=$${INFISICAL_PROJECT_ID:-}"
+      - "--infisical-url=$${INFISICAL_URL:-http://infisical-backend:8080}"
+      - "--map=/templates:/run/secrets/locket"
+      - "--mode=$${LOCKET_MODE:-watch}"
+      - "--http-addr=0.0.0.0:9090"
+    secrets:
+      - infisical_secret
+    volumes:
+      - ./secrets.env:/templates/secrets.env:ro
+      - ${INFISICAL_FALLBACK_FILE:-/run/secrets/locket/env-fallback.env}:/run/secrets/locket/env-fallback.env:ro
+      - stack-secrets:/run/secrets/locket
+    healthcheck:
+      test: ["CMD", "/locket", "healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  stack-secrets:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: uid=65532,gid=65532,mode=700
+
+secrets:
+  infisical_secret:
+    file: $${INFISICAL_SECRET_FILE:-../infisical/infisical_secret}

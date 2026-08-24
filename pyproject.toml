@@ -1,0 +1,109 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ciandlithe"
+version = "0.1.0"
+description = "British Isles civil-litigation open-source OSINT data platform"
+readme = "README.md"
+license = { text = "BUSL-1.1 (per LICENSE.md)" }
+requires-python = ">=3.12"
+authors = [
+    { name = "Cian Mac an Déisigh Uí Liatháin", email = "cianmacliathain@gmail.com" },
+]
+keywords = [
+    "british-isles",
+    "civil-litigation",
+    "medical-malpractice",
+    "osint",
+    "dlt",
+    "baml",
+    "dagster",
+    "cocoindex",
+    "motherduck",
+    "ducklake",
+    "lancedb",
+    "tanstack-start",
+    "convex",
+    "ag-ui",
+    "copilotkit",
+    "courts-ie",
+    "irishstatutebook",
+    "nicts",
+    "scotcourts",
+    "judiciary-uk",
+    "wrc",
+    "piab",
+    "hse",
+    "nhs",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Legal Industry",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Sociology :: Law",
+]
+
+dependencies = [
+    "dlt[duckdb]>=1.4.0",
+    "dagster>=1.13.0",
+    "baml-py>=0.223.0",
+    "cocoindex>=1.0.14",
+    "lancedb>=0.20.0",
+    "duckdb>=1.4.0",
+    "motherduck>=0.10.0",
+    "pydantic>=2.10.0",
+    "structlog>=25.0.0",
+    "pyyaml>=6.0.0",
+    "langfuse>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.25.0",
+    "ruff>=0.12.0",
+    "mypy>=1.13.0",
+    "openspec>=1.4.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "DTZ", "T10", "EM", "RET", "SIM", "PTH", "ERA"]
+ignore = ["E501", "B008"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_ignores = true
+warn_return_any = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ciandlithe"]
+
+# -----------------------------------------------------------------------------
+# Cross-repo Python source map — REMOVED.
+#
+# Ciandlithe is a STANDALONE iteration of the project. It does NOT
+# consume any files from Cianfhoghlaim or Cianchosaint at runtime.
+# The relevant Cianfhoghlaim + Cianchosaint assets (DLT sources + BAML
+# schemas + CocoIndex flows + agents framework + web framework + IaC
+# stacks + skills) are wholesale-copied into Ciandlithe via the
+# `openspec/changes/ciandlithe-repo-foundation-v1` openspec change,
+# then renamed to the ciandlithe namespace and refactored for the
+# civil-litigation / medical-malpractice domain.
+#
+# This file intentionally has NO [tool.uv.sources] section.
+# -----------------------------------------------------------------------------

@@ -1,0 +1,121 @@
+# CIANDLITHE per-deployment ModelProviderRouter config.
+#
+# Per the openspec/changes/ciandlithe-provider-router-v1/spec.md,
+# Requirement: Per-deployment config (YAML-driven).
+#
+# Mirrors the ciandlithe-deployment deployment-choice.yaml pattern:
+# - provider_order: the priority order of the 4 providers
+# - provider_overrides: per-provider base_url / model / timeout / enabled
+# - per_jurisdiction_overrides: per jurisdiction (from the BAML
+#   enums in baml_src/ciandlithe/ireland/law/shared_legal_enums.baml)
+#   provider + model preferences for the 8 British-Isles jurisdictions
+# - per_cohort_overrides: per BLIP v1 cohort (7 cohorts) preferences
+#
+# The router (baml_src/_shared/provider_router.py) loads this file at
+# instantiation time. If the file is missing, the router falls back
+# to the env-var chain (UNSLOTH_STUDIO_BASE_URL, LITELLM_BASE_URL,
+# MINIMAX_BASE_URL, GEMINI_BASE_URL).
+#
+# All `api_key` fields are intentionally left empty here — they MUST
+# be resolved at runtime via the mise directory hooks from the
+# Infisical `dev-baile` vault (per the cianchosaint secrets contract).
+#
+# Licence: BUSL-1.1 (per LICENSE.md)
+
+provider_order:
+  - unsloth_studio
+  - litellm
+  - minimax_token_plan
+  - gemini_api
+
+provider_overrides:
+  unsloth_studio:
+    base_url: http://unsloth-serve:8889/api/v1
+    model: minimax-m3
+    timeout_seconds: 30.0
+    enabled: true
+  litellm:
+    base_url: https://litellm.ciandlithe.ie
+    model: minimax-m3
+    timeout_seconds: 30.0
+    enabled: true
+  minimax_token_plan:
+    base_url: https://api.minimax.io/v1
+    model: minimax-m3
+    timeout_seconds: 30.0
+    enabled: true
+  gemini_api:
+    base_url: https://generativelanguage.googleapis.com/v1beta
+    model: gemini-2.5-pro
+    timeout_seconds: 30.0
+    enabled: true
+
+# Per-jurisdiction overrides for the 8 British-Isles jurisdictions
+# (from the BAML enums in baml_src/ciandlithe/ireland/law/shared_legal_enums.baml:
+# IRELAND, NI, SCOTLAND, WALES, ENGLAND, JERSEY, GUERNSEY, IOM).
+# Republic of Ireland + UK prefer Tier 1 (Unsloth Studio) for sovereign-cap.
+# Crown Dependencies (JERSEY, GUERNSEY, IOM) prefer Tier 4 (Gemini API)
+# because they're outside the EU/EEA primary LLM routing and have weaker
+# data-residency requirements for OSINT.
+per_jurisdiction_overrides:
+  IRELAND:
+    preferred_tier: unsloth_studio
+    timeout_seconds: 30.0
+  NI:
+    preferred_tier: unsloth_studio
+    timeout_seconds: 30.0
+  SCOTLAND:
+    preferred_tier: unsloth_studio
+    timeout_seconds: 30.0
+  WALES:
+    preferred_tier: unsloth_studio
+    timeout_seconds: 30.0
+  ENGLAND:
+    preferred_tier: unsloth_studio
+    timeout_seconds: 30.0
+  JERSEY:
+    preferred_tier: gemini_api
+    timeout_seconds: 30.0
+  GUERNSEY:
+    preferred_tier: gemini_api
+    timeout_seconds: 30.0
+  IOM:
+    preferred_tier: gemini_api
+    timeout_seconds: 30.0
+
+# Per-cohort overrides for the 7 BLIP v1 cohorts. The medical-malpractice
+# cohort (medical + legal extraction combined) prefers higher-accuracy
+# (Tier 2 LiteLLM routes to a hosted higher-accuracy model). The civil-
+# litigation cohort prefers Tier 1 (Unsloth Studio).
+per_cohort_overrides:
+  medical_malpractice:
+    preferred_tier: litellm
+    timeout_seconds: 60.0
+  civil_litigation_forms:
+    preferred_tier: unsloth_studio
+    timeout_seconds: 30.0
+  personal_injury_piab_nhs:
+    preferred_tier: litellm
+    timeout_seconds: 60.0
+  workplace_relations_wrc_et:
+    preferred_tier: unsloth_studio
+    timeout_seconds: 30.0
+  hse_nhs_complaints:
+    preferred_tier: litellm
+    timeout_seconds: 60.0
+  statutes_si_court_rules:
+    preferred_tier: unsloth_studio
+    timeout_seconds: 30.0
+  court_judgments_tribunal_decisions:
+    preferred_tier: unsloth_studio
+    timeout_seconds: 30.0
+
+# Conservative posture (per LICENSE.md + the ciandlithe-repo-foundation-v1 spec)
+# - API keys are resolved at runtime via the Infisical `dev-baile` vault.
+# - The router NEVER bypasses the circuit-breaker (3-strike + 60s reset).
+# - The router NEVER logs the API key to the Langfuse span attributes.
+conservative_posture:
+  enabled: true
+  licence_posture: BUSL-1.1_v2_CIANDLITHE_edition
+  osint_ceiling_enforced: true
+  analyst_review_required: true

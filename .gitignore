@@ -1,0 +1,64 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Node / Bun
+node_modules/
+.bun/
+dist/
+.turbo/
+.next/
+
+# Build / cache
+*.log
+*.tmp
+*.bak
+
+# Secrets (resolved via infisical:// template refs — never committed)
+.env
+.env.local
+.env.*.local
+*.env
+
+# OSINT scraper runtime caches
+.motherduck/
+.lance/
+.lancedb/
+.ducklake/
+.stedding_cache/
+.scraped/
+
+# Private case-study evidence (kept on disk for reference; NOT in the open repo)
+# Per docs/USAGE-GUIDELINES.md §"OSINT ceiling + PoI-data clause"
+dkit/
+eric_case/
+garda/
+little_collins/
+monroes/
+nuig/
+qub/
+qub_royal_victoria_hospital_malpractice/
+taafes/
+ucl/
+
+# Lease an exclusive rename for the open repo to avoid the collision
+stedding/private_case_evidence/
+
+# Generated openspec artifacts (where openspec --strict validates the .md sources)
+openspec/changes/archive/
+# Nested git repos in .agents/skills (the skill was itself a git repo)
+.agents/skills/copilotkit/

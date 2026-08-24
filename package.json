@@ -1,0 +1,30 @@
+{
+  "name": "ciandlithe",
+  "version": "0.1.0",
+  "private": true,
+  "description": "British Isles civil-litigation open-source OSINT data platform",
+  "license": "BUSL-1.1",
+  "workspaces": [
+    "web/apps/*",
+    "web/packages/*"
+  ],
+  "scripts": {
+    "ci:openspec:validate-all": "openspec validate --all --strict",
+    "ci:lint:license": "uv run python scripts/lint_license.py",
+    "ci:lint:openspec": "openspec validate --all --strict",
+    "ci:lint:skills": "uv run python scripts/lint_skills.py",
+    "ci:lint:drift-docs": "uv run python scripts/lint_drift_docs.py",
+    "ci:test:smoke": "uv run pytest tests/smoke/ -v"
+  },
+  "devDependencies": {
+    "@fission-ai/openspec": "^1.4.0",
+    "typescript": "^5.5.0",
+    "tsx": "^4.19.0",
+    "turbo": "^2.3.0",
+    "@biomejs/biome": "^1.9.0"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "bun": ">=1.4.0"
+  }
+}
