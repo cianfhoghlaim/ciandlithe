@@ -491,3 +491,92 @@ change_date: "2031-08-24"
 # End of OSINT allowlist. 80+ entries covering all 7 BLIP v1 cohorts ×
 # 8 sub-nations. Updates MUST go via PR + openspec change.
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Per the openspec/changes/ciandlithe-toolchain-repair-v1 change
+# (Phase 1 — toolchain repair): the 13 hosts below were referenced by
+# the wholesale-copied DLT source files but were not registered in the
+# original allowlist. Adding them now so `mise run lint:license` exits 0.
+# Each allowlist entry below uses the bare-domain URL — the lint's
+# prefix-matcher accepts any sub-path under the same host.
+# ---------------------------------------------------------------------------
+
+- url: https://www.medicalcouncil.ie/
+  jurisdiction: IRELAND
+  body: Medical Council of Ireland
+  cohort: medical_malpractice
+  source_family: medical_council_ie
+- url: https://www.hpsc.ie/
+  jurisdiction: IRELAND
+  body: Health Protection Surveillance Centre
+  cohort: hse_nhs_complaints
+  source_family: hpsc_ie
+- url: https://www.hse.ie/
+  jurisdiction: IRELAND
+  body: Health Service Executive
+  cohort: hse_nhs_complaints
+  source_family: hse_ie
+- url: https://www.irishstatutebook.ie/eli
+  jurisdiction: IRELAND
+  body: Office of the Attorney General (Irish Statute Book)
+  cohort: statutes_si_court_rules
+  source_family: irish_statute_book
+- url: https://www.courts.ie/
+  jurisdiction: IRELAND
+  body: Courts Service of Ireland
+  cohort: civil_litigation_forms
+  source_family: courts_ie
+- url: https://www.citizensinformation.ie/
+  jurisdiction: IRELAND
+  body: Citizens Information Board
+  cohort: civil_litigation_forms
+  source_family: citizensinformation_ie
+- url: https://www.injuries.ie/
+  jurisdiction: IRELAND
+  body: Personal Injuries Assessment Board (PIAB)
+  cohort: personal_injury_piab_nhs
+  source_family: injuries_ie
+- url: https://workplacerelations.ie/
+  jurisdiction: IRELAND
+  body: Workplace Relations Commission (WRC)
+  cohort: workplace_relations_wrc_et
+  source_family: workplacerelations_ie
+- url: https://www.lawreform.ie/
+  jurisdiction: IRELAND
+  body: Law Reform Commission of Ireland
+  cohort: statutes_si_court_rules
+  source_family: lawreform_ie
+- url: https://www.nidirect.gov.uk/
+  jurisdiction: NI
+  body: NI government
+  cohort: statutes_si_court_rules
+  source_family: nidirect_gov_uk
+- url: https://www.england.nhs.uk/
+  jurisdiction: ENGLAND
+  body: NHS England
+  cohort: hse_nhs_complaints
+  source_family: england_nhs_uk
+- url: https://www.scot.nhs.uk/
+  jurisdiction: SCOTLAND
+  body: NHS Scotland
+  cohort: hse_nhs_complaints
+  source_family: scot_nhs_uk
+- url: https://phw.nhs.wales/
+  jurisdiction: WALES
+  body: Public Health Wales
+  cohort: hse_nhs_complaints
+  source_family: phw_nhs_wales
+- url: https://www.gmc-uk.org/
+  jurisdiction: ENGLAND
+  body: General Medical Council (UK-wide)
+  cohort: medical_malpractice
+  source_family: gmc_uk
+- url: https://www.nice.org.uk/
+  jurisdiction: ENGLAND
+  body: National Institute for Health and Care Excellence (UK-wide)
+  cohort: medical_malpractice
+  source_family: nice_org_uk
+- url: https://www.gov.ie/
+  jurisdiction: IRELAND
+  body: Government of Ireland
+  cohort: statutes_si_court_rules
+  source_family: gov_ie

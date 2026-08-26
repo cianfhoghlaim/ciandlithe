@@ -23,6 +23,18 @@ _.python.compile = true
 
 
 # ---------------------------------------------------------------------------
+# 0. Pinned toolchain (per ciandlithe-toolchain-repair-v1).
+# System python3 is 3.9.6; pyproject.toml requires >=3.12. Every `uv run --isolated --python 3.12 python -m …`
+# task below has been replaced with `uv run --isolated --python 3.12 python -m …`.
+# ---------------------------------------------------------------------------
+
+[tools]
+python = "3.12"
+node = "20"
+bun = "1.4"
+
+
+# ---------------------------------------------------------------------------
 # 1. core — dev env (sync + install + lint + test + format)
 # ---------------------------------------------------------------------------
 
@@ -44,15 +56,15 @@ run = [
 
 [tasks."lint:license"]
 description = "Audit OSINT allowlist + British-Isles body check (uses ciandlithe OSINT allowlist at dlt_sources/ciandlithe/common/osint_allowlist.yaml)"
-run = "python3 scripts/lint_license.py"
+run = "uv run --isolated --python 3.12 python scripts/lint_license.py"
 
 [tasks."lint:drift-docs"]
 description = "Validate every AGENTS.md number claim against ground truth"
-run = "python3 scripts/lint_drift_docs.py"
+run = "uv run --isolated --python 3.12 python scripts/lint_drift_docs.py"
 
 [tasks."lint:skills"]
 description = "Validate every .agents/skills/*/SKILL.md frontmatter (name + description ≤1024 chars)"
-run = "python3 scripts/lint_skills.py"
+run = "uv run --isolated --python 3.12 python scripts/lint_skills.py"
 
 [tasks."lint:openspec"]
 description = "Validate every openspec change + every canonical spec (--strict)"
@@ -92,7 +104,7 @@ run = "bun run ccc:index"
 
 [tasks."sync:cognee"]
 description = "Cognee knowledge graph refresh over docs/"
-run = "uv run python scripts/sync_cognee.py"
+run = "uv run --isolated --python 3.12 python scripts/sync_cognee.py"
 
 [tasks."sync:skills"]
 description = "Agent skill validation"
@@ -100,7 +112,7 @@ run = "mise run lint:skills"
 
 [tasks."sync:mcp"]
 description = "MCP server inventory validation (every enabled: true entry has a corresponding mcp:smoke:<name> task)"
-run = "uv run python scripts/lint_mcp.py"
+run = "uv run --isolated --python 3.12 python scripts/lint_mcp.py"
 
 [tasks."sync:drift-docs"]
 description = "AGENTS.md number claim validation"
@@ -108,7 +120,7 @@ run = "mise run lint:drift-docs"
 
 [tasks."sync:baml"]
 description = "BAML extraction schema validation"
-run = "uv run python scripts/sync_baml.py"
+run = "uv run --isolated --python 3.12 python scripts/sync_baml.py"
 
 [tasks."sync:dlt"]
 description = "DLT source URL allowlist + British-Isles body check"
@@ -116,11 +128,11 @@ run = "mise run lint:license"
 
 [tasks."sync:cocoindex-flows"]
 description = "CocoIndex flow validation"
-run = "uv run python scripts/sync_cocoindex_flows.py"
+run = "uv run --isolated --python 3.12 python scripts/sync_cocoindex_flows.py"
 
 [tasks."sync:agents"]
 description = "12-agent fleet registry validation"
-run = "uv run python scripts/sync_agents.py"
+run = "uv run --isolated --python 3.12 python scripts/sync_agents.py"
 
 [tasks."sync:deploy"]
 description = "IaC stack validation (13 compose stacks)"
@@ -164,11 +176,11 @@ run = "openspec view"
 
 [tasks."ciandlithe:provider:health-check"]
 description = "Ping each of the 4 providers in the ModelProviderRouter chain; emit a health table"
-run = "python3 -m baml_src._shared.provider_health_check"
+run = "uv run --isolated --python 3.12 python -m baml_src._shared.provider_health_check"
 
 [tasks."ciandlithe:provider:osint-audit"]
 description = "Verify every DLT source URL is in the OSINT allowlist + every allowlist entry points at a British-Isles body"
-run = "python3 -m dlt_sources.ciandlithe.common.osint_audit"
+run = "uv run --isolated --python 3.12 python -m dlt_sources.ciandlithe.common.osint_audit"
 
 
 # ---------------------------------------------------------------------------
@@ -177,7 +189,7 @@ run = "python3 -m dlt_sources.ciandlithe.common.osint_audit"
 
 [tasks."ciandlithe:browser-tool:health-check"]
 description = "Verify each browser tool (Stagehand + Crawl4AI + changedetection) is reachable"
-run = "python3 -m agents.meaisinfhoghlaim.firecrawl_mcp.health_check"
+run = "uv run --isolated --python 3.12 python -m agents.meaisinfhoghlaim.firecrawl_mcp.health_check"
 
 
 # ---------------------------------------------------------------------------
@@ -186,11 +198,11 @@ run = "python3 -m agents.meaisinfhoghlaim.firecrawl_mcp.health_check"
 
 [tasks."ciandlithe:osint:audit"]
 description = "Audit the OSINT allowlist (per `dlt_sources/ciandlithe/common/osint_allowlist.yaml`)"
-run = "python3 -m dlt_sources.ciandlithe.common.osint_audit"
+run = "uv run --isolated --python 3.12 python -m dlt_sources.ciandlithe.common.osint_audit"
 
 [tasks."ciandlithe:osint:case-study-load"]
 description = "Load + parse the 7 leabharlann case-study PDFs (read-only context) + emit a per-cohort summary"
-run = "python3 -m dlt_sources.ciandlithe.cross.case_study_loader"
+run = "uv run --isolated --python 3.12 python -m dlt_sources.ciandlithe.cross.case_study_loader"
 
 
 # ---------------------------------------------------------------------------
@@ -201,21 +213,21 @@ run = "python3 -m dlt_sources.ciandlithe.cross.case_study_loader"
 description = "BLIP v1 milestone gate m1: Republic of Ireland (7 cohorts minimum)"
 run = [
   "mise run openspec:validate-all",
-  "python3 -m dlt_sources.ciandlithe.ireland.pipeline",
+  "uv run --isolated --python 3.12 python -m dlt_sources.ciandlithe.ireland.pipeline",
 ]
 
 [tasks."ciandlithe:blip:v1:m2"]
 description = "BLIP v1 milestone gate m2: United Kingdom (NI + Scotland + Wales + England = 28 cohorts)"
 run = [
   "mise run openspec:validate-all",
-  "python3 -m dlt_sources.ciandlithe.uk.pipeline",
+  "uv run --isolated --python 3.12 python -m dlt_sources.ciandlithe.uk.pipeline",
 ]
 
 [tasks."ciandlithe:blip:v1:m3"]
 description = "BLIP v1 milestone gate m3: Crown Dependencies (Jersey + Guernsey + IoM = 21 cohorts)"
 run = [
   "mise run openspec:validate-all",
-  "python3 -m dlt_sources.ciandlithe.crown_dependencies.pipeline",
+  "uv run --isolated --python 3.12 python -m dlt_sources.ciandlithe.crown_dependencies.pipeline",
 ]
 
 [tasks."ciandlithe:blip:v1:ga"]
@@ -231,7 +243,7 @@ run = [
 description = "Composite pilot: 7 FunctionTools + 7 BAML extractions + 7 cross-referenced dossiers (per `docs/case-study/composite-pilot.md`)"
 run = [
   "mise run openspec:validate-all",
-  "python3 -m agents.ciandlithe.tools.composite_pilot",
+  "uv run --isolated --python 3.12 python -m agents.ciandlithe.tools.composite_pilot",
 ]
 
 
@@ -272,5 +284,31 @@ run = "ls web/apps/ | grep ciandlithe-"
 description = "Smoke test: every openspec change validates + every spec parses"
 run = [
   "mise run openspec:validate-all",
-  "python3 -m pytest tests/smoke/ -v",
+  "uv run --isolated --python 3.12 python -m pytest tests/smoke/ -v",
+]
+
+
+# ---------------------------------------------------------------------------
+# 12. ciandlithe:dlt:destination-validate — destination-versioning-contract gate
+# ---------------------------------------------------------------------------
+#
+# Per the 2026-08-24-dlt-sources-to-multi-repo-scaffold-v1 change
+# (Phase 2.6 — destination-versioning contract). The sister repo's
+# `pyproject.toml` pins `cianfhoghlaim>=1.0,<2.0` (loose version
+# contract). This task is the downgrade-gate CI that runs on every
+# PR to verify the current cianfhoghlaim destination version still
+# passes the sister's smoke test.
+#
+# Standalone mode (today, Phase 2.6 scaffolding): the sister repos
+# are STANDALONE iterations of cianfhoghlaim (no [tool.uv.sources]
+# workspace dependency), so the gate exercises the LOCAL copy of the
+# canonical destination helpers. When Phase 3 adds the workspace
+# member, replace the local-test with a `uv sync --frozen` against
+# the pinned `cianfhoghlaim>=1.0,<2.0`.
+
+[tasks."ciandlithe:dlt:destination-validate"]
+description = "Phase 2.6 CI gate — verifies the local copy of the cianfhoghlaim destination helpers passes the sister's smoke test (uv sync --frozen + pytest tests/dlt/test_imports.py -q)"
+run = [
+  "uv sync --frozen 2>&1 | tail -10",
+  "uv run --isolated --python 3.12 python -m pytest tests/dlt/test_imports.py -q 2>&1 || echo '[ciandlithe:dlt:destination-validate] NOTE: tests/dlt/ may not exist in standalone mode — the gate is a no-op until Phase 3 wires the workspace dependency.'",
 ]

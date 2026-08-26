@@ -1,30 +1,6 @@
 ---
 name: tuatha
-description: |
-  The British Isles Formative Assessment MMO. The canonical
-  capability for the new tuatha/ independent sub-project at
-  /Users/cianmacandeisigh/dev/kings_college_galway/tuatha/
-  (soon to be the independent GitHub repo at
-  github.com/cianmacandeisigh/tuatha.git). The 8 NCCA Leaving
-  Certificate subjects + the 3 educational agents + the 4
-  BIEP hackathon features + the 1 media_intel pipeline.
-
-  Use this skill when adding or modifying anything in the new
-  tuatha/ sub-project: the 8 subject agents, the 40
-  subject-specific tools, the 3 educational agents, the 4 BIEP
-  hackathon features, the media_intel pipeline, the BAML
-  contracts, the DLT sources, the Dagster asset groups, the
-  CocoIndex v1 Apps, the marimo notebooks, the badges
-  credential system, the web layer, the CI, the docs, the
-  tests.
-
-  The skill supersedes the deprecated tuatha-mmo +
-  tuatha-platform + celtic-asset-generation skills. The
-  legacy theming (Pent-Elemental Cosmology + Babylon.js 3D +
-  SpacetimeDB v2 + Crypteolas + Anam Cara + Brown Ajah) is
-  HARD-ARCHIVED per the 2026-08-25 consolidation change. The
-  new tuatha uses the British Isles Formative Assessment MMO
-  theme per openspec/specs/cianfhoghlaim-educational-mmo.
+description: | The British Isles Formative Assessment MMO. The canonical capability for the new tuatha/ independent sub-project at /Users/cianmacandeisigh/dev/kings_college_galway/tuatha/ (soon to be the independent GitHub repo at github.com/cianmacandeisigh/tuatha.git). The 8 NCCA Leaving Certificate subjects + the 3 educational agents + the 4 BIEP hackathon features + the 1 media_intel pipeline. Use this skill when adding or modifying anything in the new tuatha/ sub-project: the 8 subject agents, the 40 subject-specific tools, the 3 educational agents, the 4 BIEP hackathon features, the media_intel pipeline, the BAML contracts, the DLT sources, the Dagster asset groups, the CocoIndex v1 Apps, the marimo notebooks, the badges credential system, the web layer, the CI, the docs, the tests. The skill supersedes the deprecated tuatha-mmo + tuatha-platform + celtic-asset-generation skills.
 when_to_use: "tuatha British Isles Formative Assessment MMO consolidation BAML extraction DLT source Dagster asset group CocoIndex App marimo notebook"
 ---
 
