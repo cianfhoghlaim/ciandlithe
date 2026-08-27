@@ -263,7 +263,7 @@
 - title: "Pipelines: Dagster, DLT, CocoIndex, BAML, marimo"
   description: |
     Concrete pipeline code: Dagster asset definitions (the 5-layer
-    KCG component architecture), DLT sources, BAML extraction,
+    Cianfhoghlaim component architecture), DLT sources, BAML extraction,
     CocoIndex v1 Apps, and marimo notebooks. Post-v7, the legacy
     docs/03-pipelines/*.py files were absorbed into
     orchestration/AGENTS.md + dlt_sources/DATA_PLATFORM_ROUTER.md.
@@ -401,10 +401,10 @@
 - title: "dagster-asset-graph"
   description: |
     The 5-layer Dagster asset graph (per the dagster-5-layer-component-architecture
-    spec) + the canonical 5 KCG Components + the Layer 6 sync loop. Use when
+    spec) + the canonical 5 Cianfhoghlaim Components + the Layer 6 sync loop. Use when
     the user asks "how do I validate Dagster assets", "what are the 5 layers
     of the defs/ tree", "where is the asset sync dashboard", or "how do I
-    write a Dagster asset health check". ~833 assets + 5 layers + 5 KCG
+    write a Dagster asset health check". ~833 assets + 5 layers + 5 Cianfhoghlaim
     Components + 4 derived components. Per the
     2026-08-15-retroactive-pre-v7-cleanup-v1 change (Layer 6).
   files:
@@ -422,7 +422,7 @@
     - scripts/sync_dagster_assets_to_cognee.py
     - notebooks/sync_health.py
     - .agents/skills/dagster-asset-sync/SKILL.md
-  tags: [dagster, asset, sync, defs, 5-layer, kcg-component, layer6]
+  tags: [dagster, asset, sync, defs, 5-layer, cianfhoghlaim-component, layer6]
   domain: "06-pipelines"
 
 - title: "baml-function-search"

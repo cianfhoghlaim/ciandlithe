@@ -21,7 +21,7 @@
 #
 
 """
-Named dlt destinations — the canonical KCG pattern.
+Named dlt destinations — the canonical Cianfhoghlaim pattern.
 
 The named destination registry decouples DLT sources from the
 physical destination backend. A source declares its destination

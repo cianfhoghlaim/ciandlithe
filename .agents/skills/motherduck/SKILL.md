@@ -1,6 +1,6 @@
 ---
 name: motherduck
-description: Master routing skill for all MotherDuck operations. Use this to determine which of the 4 task-specific MotherDuck sub-skills to invoke (architecture, data-modeling, analytics, connections), or to wire the mcp-server-motherduck (the KCG-preferred agent path). Powers the 4 BIEP Dives (`lc_syllabus_topics`, `lc_exam_difficulty`, `lc_marking_complexity`, `gov_circulars_archive`) + the lc6 MotherDuck Flights (scheduled DuckDB queries for BAML row backfill).
+description: Master routing skill for all MotherDuck operations. Use this to determine which of the 4 task-specific MotherDuck sub-skills to invoke (architecture, data-modeling, analytics, connections), or to wire the mcp-server-motherduck (the Cianfhoghlaim-preferred agent path). Powers the 4 BIEP Dives (`lc_syllabus_topics`, `lc_exam_difficulty`, `lc_marking_complexity`, `gov_circulars_archive`) + the lc6 MotherDuck Flights (scheduled DuckDB queries for BAML row backfill).
 ---
 
 # MotherDuck Master Router
@@ -30,7 +30,7 @@ and best practices.
 MotherDuck ships an official **MCP server** (`mcp-server-motherduck`)
 that exposes DuckDB / MotherDuck SQL analytics to any MCP
 client (Cursor, VS Code, Claude Desktop, opencode). This
-is the KCG-preferred way to drive `oideachais` analytics
+is the Cianfhoghlaim-preferred way to drive `oideachais` analytics
 from inside an IDE or agent runtime without leaving the
 DuckDB dialect.
 
@@ -60,9 +60,9 @@ DuckDB dialect.
 
 | Flag | Default | When to override |
 |:--|:--|:--|
-| `--db-path` | `md:` | Use `/path/to/local.duckdb` for local-only; `md:cianfhoghlaim` for the read-only KCG lakehouse (post-v7 canonical); `s3://bucket/path.duckdb` for object-storage |
+| `--db-path` | `md:` | Use `/path/to/local.duckdb` for local-only; `md:cianfhoghlaim` for the read-only Cianfhoghlaim lakehouse (post-v7 canonical); `s3://bucket/path.duckdb` for object-storage |
 | `--motherduck-token` | `$motherduck_token` env | Required for any `md:` access |
-| `--read-only` | `false` | **Always set true** for the KCG read-only consumer pattern |
+| `--read-only` | `false` | **Always set true** for the Cianfhoghlaim read-only consumer pattern |
 | `--saas-mode` | `false` | Enable in production for security: disables filesystem + write perms for local DuckDB |
 | `--max-rows` | 1024 | Lower to 256 for chat contexts; raise to 4096 for marimo notebooks |
 | `--max-chars` | 50000 | Raise to 200000 for marimo notebooks; lower to 5000 for narrow chat contexts |
@@ -78,10 +78,10 @@ uvx mcp-server-motherduck --help
 
 # Local DuckDB file (read-only)
 uvx mcp-server-motherduck \
-  --db-path /Users/cianmacandeisigh/dev/kings_college_galway/stedding/cianfhoghlaim.duckdb \
+  --db-path /Users/cianmacandeisigh/dev/cianfhoghlaim/stedding/cianfhoghlaim.duckdb \
   --read-only
 
-# MotherDuck cloud (KCG read-only consumer)
+# MotherDuck cloud (Cianfhoghlaim read-only consumer)
 uvx mcp-server-motherduck \
   --db-path md:cianfhoghlaim \
   --motherduck-token "$MOTHERDUCK_TOKEN" \
@@ -127,7 +127,7 @@ the secret store, then referenced as
 **Claude Desktop** (`claude_desktop_config.json`): same
 `mcpServers` shape as Cursor.
 
-### KCG production rules
+### Cianfhoghlaim production rules
 
 - **Always `--read-only --saas-mode`** for the
   `oideachais` consumer pattern. The agent must not be
@@ -164,7 +164,7 @@ data-sharing semantics.
 
 ## 2026-06 updates (from the `upstream-package-monitoring` openspec change)
 
-- **DuckLake 1.0** launched 2026-04-16 on MotherDuck. The KCG
+- **DuckLake 1.0** launched 2026-04-16 on MotherDuck. The Cianfhoghlaim
   production lakehouse (`cianfhoghlaim/`) uses DuckLake 1.0. New
   features in 1.0:
   - **Data inlining** — also applies to updates and deletes (not
@@ -181,7 +181,7 @@ data-sharing semantics.
     geospatial assets in
     `orchestration/defs/2_materials/geospatial_assets.py`.
 - **3 hosting options** — fully managed (MotherDuck SaaS, default
-  for KCG dev), BYOB (your own Garage S3 bucket, default for KCG
+  for Cianfhoghlaim dev), BYOB (your own Garage S3 bucket, default for Cianfhoghlaim
   production per `dlt/dlt_utils/motherduck_options.py:byob_destination`),
   and BYOC (your own compute + your own bucket — for regulated
   workloads).
@@ -208,9 +208,9 @@ Source: `/docs/key-tasks/ai-and-motherduck/dives/` and `/sql-reference/mcp/`.
 
 ## MotherDuck token — Business-tier required (carry forward)
 
-KCG notebooks use 4 shared databases (`cianfhoghlaim_public`, `cianfhoghlaim_team`, `leabharlann_public`, `leabharlann_team`). Lite is 3 users, 2 service accounts, 10 GB — too small. The token must be a **Business-tier** PAT.
+Cianfhoghlaim notebooks use 4 shared databases (`cianfhoghlaim_public`, `cianfhoghlaim_team`, `leabharlann_public`, `leabharlann_team`). Lite is 3 users, 2 service accounts, 10 GB — too small. The token must be a **Business-tier** PAT.
 
-## British-Isles Education pipeline — Canonical KCG pattern (post-v4)
+## British-Isles Education pipeline — Canonical Cianfhoghlaim pattern (post-v4)
 
 The post-v4 lc6 pipeline (`openspec/changes/lc6-biep/`) consumes
 the BAML-extracted DuckLake tables via **4 MotherDuck Dives**

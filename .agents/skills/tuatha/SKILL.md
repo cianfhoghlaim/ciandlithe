@@ -1,6 +1,6 @@
 ---
 name: tuatha
-description: | The British Isles Formative Assessment MMO. The canonical capability for the new tuatha/ independent sub-project at /Users/cianmacandeisigh/dev/kings_college_galway/tuatha/ (soon to be the independent GitHub repo at github.com/cianmacandeisigh/tuatha.git). The 8 NCCA Leaving Certificate subjects + the 3 educational agents + the 4 BIEP hackathon features + the 1 media_intel pipeline. Use this skill when adding or modifying anything in the new tuatha/ sub-project: the 8 subject agents, the 40 subject-specific tools, the 3 educational agents, the 4 BIEP hackathon features, the media_intel pipeline, the BAML contracts, the DLT sources, the Dagster asset groups, the CocoIndex v1 Apps, the marimo notebooks, the badges credential system, the web layer, the CI, the docs, the tests. The skill supersedes the deprecated tuatha-mmo + tuatha-platform + celtic-asset-generation skills.
+description: | The British Isles Formative Assessment MMO. The canonical capability for the new tuatha/ independent sub-project at /Users/cianmacandeisigh/dev/cianfhoghlaim/tuatha/ (soon to be the independent GitHub repo at github.com/cianmacandeisigh/tuatha.git). The 8 NCCA Leaving Certificate subjects + the 3 educational agents + the 4 BIEP hackathon features + the 1 media_intel pipeline. Use this skill when adding or modifying anything in the new tuatha/ sub-project: the 8 subject agents, the 40 subject-specific tools, the 3 educational agents, the 4 BIEP hackathon features, the media_intel pipeline, the BAML contracts, the DLT sources, the Dagster asset groups, the CocoIndex v1 Apps, the marimo notebooks, the badges credential system, the web layer, the CI, the docs, the tests. The skill supersedes the deprecated tuatha-mmo + tuatha-platform + celtic-asset-generation skills.
 when_to_use: "tuatha British Isles Formative Assessment MMO consolidation BAML extraction DLT source Dagster asset group CocoIndex App marimo notebook"
 ---
 
@@ -8,7 +8,7 @@ when_to_use: "tuatha British Isles Formative Assessment MMO consolidation BAML e
 
 > **The canonical capability for the new tuatha/ sub-project.**
 > A self-contained independent sub-project at
-> `/Users/cianmacandeisigh/dev/kings_college_galway/tuatha/`
+> `/Users/cianmacandeisigh/dev/cianfhoghlaim/tuatha/`
 > (the new top-level dir; will become the independent GitHub
 > repo at `github.com/cianmacandeisigh/tuatha.git`).
 
@@ -32,7 +32,7 @@ canonical spec added by the consolidation change).
 
 ```bash
 # The new tuatha project lives at the monorepo root
-cd /Users/cianmacandeisigh/dev/kings_college_galway/tuatha/
+cd /Users/cianmacandeisigh/dev/cianfhoghlaim/tuatha/
 
 # Read the planning + execution docs
 cat CONSOLIDATION_PLAN.md     # the high-level plan
@@ -124,7 +124,7 @@ cat openspec/specs/tuatha-british-isles-mmo/AGENTS.md
 | [`british-isles-formative-assessment`](../british-isles-formative-assessment/SKILL.md) | the 5 curriculum frameworks + the 4 feedback channels |
 | [`baml`](../baml/SKILL.md) | BAML extraction patterns + the 8-stage BAML lifecycle |
 | [`dlt`](../dlt/SKILL.md) | DLT source patterns + the `source.yaml` manifest |
-| [`dagster`](../dagster/SKILL.md) | the 5-layer KCG Component Architecture |
+| [`dagster`](../dagster/SKILL.md) | the 5-layer Cianfhoghlaim Component Architecture |
 | [`agent-fleet-orchestration`](../agent-fleet-orchestration/SKILL.md) | the 12-agent fleet wiring + the 5-framework runtime + the LiteLLM routing keyword map |
 | [`dignified-python`](../dignified-python/SKILL.md) | production Python standards |
 | [`motherduck`](../motherduck/SKILL.md) | the lakehouse / DuckDB / MotherDuck query surface |

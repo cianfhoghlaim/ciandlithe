@@ -33,7 +33,7 @@ production hosting options per
 | byob    | MotherDuck   | Self-hosted| MotherDuck  | "I want to own my own data"        |
 | byoc    | MotherDuck   | Self-hosted| Self-hosted | "I want to use multiple engines"   |
 
-The KCG default is **byob** (the "sweet spot" per the launch
+The Cianfhoghlaim default is **byob** (the "sweet spot" per the launch
 post) — MotherDuck handles the catalog and compute (low ops),
 but the data lives in our own Garage S3 bucket (data sovereignty).
 

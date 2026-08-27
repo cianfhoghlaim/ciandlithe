@@ -202,9 +202,9 @@ To view or edit embedding model configuration, include/exclude patterns, or lang
 
 For installation, initialization, daemon management, troubleshooting, and cleanup commands, see [management.md](references/management.md).
 
-## KCG integration
+## Cianfhoghlaim integration
 
-CCC is the **primary code discovery tool** for every KCG
+CCC is the **primary code discovery tool** for every Cianfhoghlaim
 agent — per the root `AGENTS.md` instruction, "always use
 ccc before grep/find". The polyglot monorepo is indexed
 continuously into `.cocoindex_code/target_sqlite.db`
@@ -219,7 +219,7 @@ every agent. The tool returns ranked
 `[file_path, line_range, score]` tuples — semantic,
 embedding-based, not keyword.
 
-**4 canonical CocoIndex flow examples** for the KCG
+**4 canonical CocoIndex flow examples** for the Cianfhoghlaim
 workloads:
 
 ```python
@@ -263,7 +263,7 @@ code from CCC and architecture from Cognee, then merges.
 | `ccc:search` | Semantic query | <1s |
 | `ccc mcp` server | Continuous | Background |
 
-See `references/kcg-integration/CCC_INTEGRATION.md` for
+See `references/cianfhoghlaim-integration/CCC_INTEGRATION.md` for
 the full 187-line reference: the current setup, the MCP
 config, the index update policy (incremental + full rebuild
 + scheduled via `bun run turbo ccc:index`), the search
@@ -273,7 +273,7 @@ CCC + Cognee dual-search diagram, the index file structure
 (`.cocoindex_code/{cocoindex.db, settings.yml, target_sqlite.db}`),
 the performance table, and the cross-references.
 
-## KCG ccc-ready index health
+## Cianfhoghlaim ccc-ready index health
 
 The round-1 `cocoindex_readiness_audit` (327 lines, dated
 2026-06-06) confirmed the CCC index is **already
@@ -345,7 +345,7 @@ commands.
 
 ## Appendix A: Alternative engines
 
-The KCG-canonical code search is `ccc` (this skill). Two
+The Cianfhoghlaim-canonical code search is `ccc` (this skill). Two
 alternative engines are tracked:
 
 ### ChunkHound (now removed from `.agents/skills/`)
@@ -353,7 +353,7 @@ alternative engines are tracked:
 ChunkHound (2024-2025) is an open-source local-first code
 search engine. It used to ship as a separate skill
 (`.agents/skills/chunkhound/SKILL.md`) but was consolidated
-into this skill. Key ChunkHound capabilities the KCG team
+into this skill. Key ChunkHound capabilities the Cianfhoghlaim team
 liked (and which `ccc` v1 does NOT replicate):
 
 - **Two-layer architecture**: base RAG layer (cAST chunking +
@@ -382,7 +382,7 @@ liked (and which `ccc` v1 does NOT replicate):
   Dagster + CocoIndex v1 + LanceDB + (optionally) Lance
   Cloud infrastructure.
 
-**How to install ChunkHound if needed** (KCG teams don't
+**How to install ChunkHound if needed** (Cianfhoghlaim teams don't
 ship it as a skill anymore):
 
 ```bash
@@ -396,14 +396,14 @@ The ChunkHound `.chunkhound.json` configuration pattern
 (local-first, no cloud) is the right default for any
 air-gapped or compliance-constrained project.
 
-### Other engines (not in KCG)
+### Other engines (not in Cianfhoghlaim)
 
 - **Sourcegraph** — enterprise code intelligence, paid.
 - **livegrep** — regex-only, no embeddings.
 - **Zoekt** — gitlab's regex engine.
 - **Code Search (Google internal)** — not available externally.
 
-The KCG stack uses `ccc` (canonical) or `ChunkHound`
+The Cianfhoghlaim stack uses `ccc` (canonical) or `ChunkHound`
 (per-project self-hosted) for all production code search.
 
 ## See also
