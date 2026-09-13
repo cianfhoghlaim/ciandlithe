@@ -62,3 +62,19 @@ stedding/private_case_evidence/
 openspec/changes/archive/
 # Nested git repos in .agents/skills (the skill was itself a git repo)
 .agents/skills/copilotkit/
+
+# Marimo notebook cache (do NOT commit)
+notebooks/__marimo__/
+# CocoIndex state (do NOT commit — flow runtime state)
+.cocoindex/
+.cocoindex_code/
+
+# OSINT allowlist is the canonical licence surface — IS NOT in .gitignore
+
+# Stedding parent (only specific subdirs committed; rest gitignored)
+stedding/ingest_queue/
+stedding/lancedb/
+stedding/site_scrape_samples/
+
+# cianfhoghlaim_backup / leabharlann stuff — never commit
+stedding/huggingface/

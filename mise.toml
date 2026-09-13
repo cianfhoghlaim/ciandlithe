@@ -312,3 +312,26 @@ run = [
   "uv sync --frozen 2>&1 | tail -10",
   "uv run --isolated --python 3.12 python -m pytest tests/dlt/test_imports.py -q 2>&1 || echo '[ciandlithe:dlt:destination-validate] NOTE: tests/dlt/ may not exist in standalone mode — the gate is a no-op until Phase 3 wires the workspace dependency.'",
 ]
+
+# ---------------------------------------------------------------------------
+# 13. ciandlithe:adk:su-smoke-test — Students' Union ADK smoke test
+# ---------------------------------------------------------------------------
+#
+# Per openspec/changes/ciandlithe-students-union-adk-v1. Exercises all
+# 5 SU case-study tools + 5 ADK agents + the root orchestrator +
+# the classify_su_query intent classifier. Exits 0 iff every
+# deterministic assertion passes. Run from the cianchosaint/.venv
+# (which has google-adk 2.9.0 installed) until ciandlithe/.venv
+# gets google-adk installed.
+
+[tasks."ciandlithe:adk:su-smoke-test"]
+description = "Run the 5 SU case-study tools + 5 ADK agents + root_agent + classify_su_query smoke test"
+run = [
+  "/Users/cianmacandeisigh/dev/cianchosaint/.venv/bin/python3 ${CIANDLITHE_REPO_ROOT}/agents/adk/students_union/_smoke_test.py",
+]
+
+[tasks."ciandlithe:adk:su-smoke-test-cross-repo"]
+description = "Cross-repo smoke test — SU agents consume real KCG data from ~/dev/kings_college_galway"
+run = [
+  "/Users/cianmacandeisigh/dev/cianchosaint/.venv/bin/python3 ${CIANDLITHE_REPO_ROOT}/agents/adk/students_union/_smoke_test_cross_repo.py",
+]
