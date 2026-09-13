@@ -78,3 +78,6 @@ stedding/site_scrape_samples/
 
 # cianfhoghlaim_backup / leabharlann stuff — never commit
 stedding/huggingface/
+
+# Stedding runtime caches (do NOT commit)
+stedding/
