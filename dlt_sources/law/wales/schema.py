@@ -1,0 +1,13 @@
+"""dlt_sources.law.wales.schema — Wales law Pydantic schemas (skeleton).
+
+SKELETON — re-exports the shared ``BritishIslesLegislationRow``
+schema from the England schema.
+"""
+from __future__ import annotations
+
+from dlt_sources.law.england.schema import (
+    BritishIslesLegislationRow,
+    legislation_rows,
+)
+
+__all__ = ["BritishIslesLegislationRow", "legislation_rows"]

@@ -1,0 +1,73 @@
+name: dlt-sister-sync-call
+
+# Per the 2026-08-24-dlt-sources-to-multi-repo-scaffold-v1 change
+# (Phase 2.3 — per-PR reciprocal mirror call site for ciandlithe).
+#
+# This is the CALL SITE for the cianfhoghlaim reusable workflow
+# `.github/workflows/dlt-sister-sync.yml`. It lives here in ciandlithe
+# because ciandlithe is the sister repo — every PR opened against
+# ciandlithe's `dlt_sources/<vertical>/...` should trigger a reciprocal
+# PR on cianfhoghlaim via the reusable workflow.
+#
+# SISTER CONTEXT: ciandlithe (British Isles civil-litigation)
+# OWNED VERTICAL: law/ (per the 2026-08-24 Phase 2 split rule)
+
+on:
+  pull_request:
+    paths:
+      - "dlt_sources/law/**"
+      - "dlt_sources/_cross/**"
+      - "dlt_sources/ciandlithe/**"
+  push:
+    branches: [main]
+    paths:
+      - "dlt_sources/law/**"
+      - "dlt_sources/_cross/**"
+      - "dlt_sources/ciandlithe/**"
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    name: Open reciprocal PR on cianfhoghlaim
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build the changed-files JSON manifest
+        id: manifest
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          HEAD_REF: ${{ github.head_ref || github.ref }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            # For PR events, use the GitHub API to enumerate changed files
+            CHANGED=$(gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER/files" \
+              --jq '[.[] | .filename]')
+          else
+            # For push events, diff against the previous commit
+            CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'dlt_sources/law/' 'dlt_sources/_cross/' 'dlt_sources/ciandlithe/' \
+              | jq -R -s 'split("\n") | map(select(length > 0))')
+          fi
+          echo "changed-files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$CHANGED" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Call the cianfhoghlaim reusable workflow
+        uses: cianmacandeisigh/cianfhoghlaim/.github/workflows/dlt-sister-sync.yml@v1.0-dlt-sister-sync
+        with:
+          sister-repo: ciandlithe
+          changed-files: ${{ steps.manifest.outputs.changed-files }}
+          source-pr: ${{ github.event.pull_request.number || '0' }}
+          source-sha: ${{ github.event.pull_request.head.sha || github.sha }}
+          source-branch: ${{ github.head_ref || github.ref_name }}
+          target-branch: main
+          dry-run: ${{ github.event_name == 'pull_request' && false || false }}
+          macos-sed-target: darwin-bsd-sed
