@@ -202,6 +202,57 @@ change_date: "2031-08-24"
   body: Bar of Northern Ireland
   cohort: civil_litigation_forms
   source_family: bar_ni
+- url: https://www.judiciaryni.uk/
+  jurisdiction: NI
+  body: Judiciary Northern Ireland (Lady Chief Justice's Office)
+  cohort: court_judgments_tribunal_decisions
+  source_family: judiciary_ni
+- url: https://www.ppsni.gov.uk/
+  jurisdiction: NI
+  body: Public Prosecution Service Northern Ireland (PPS NI)
+  cohort: court_judgments_tribunal_decisions
+  source_family: pps_ni
+- url: https://www.bailii.org/
+  jurisdiction: UK_WIDE
+  body: British and Irish Legal Information Institute (BAILII)
+  cohort: court_judgments_tribunal_decisions
+  source_family: bailii
+- url: https://www.lawcentreni.org/
+  jurisdiction: NI
+  body: Law Centre Northern Ireland
+  cohort: civil_litigation_forms
+  source_family: law_centre_ni
+- url: https://www.housingrights.org.uk/
+  jurisdiction: NI
+  body: Housing Rights Northern Ireland
+  cohort: civil_litigation_forms
+  source_family: housing_rights_ni
+- url: https://www.disabilityaction.org/
+  jurisdiction: NI
+  body: Disability Action Northern Ireland
+  cohort: civil_litigation_forms
+  source_family: disability_action_ni
+- url: https://www.equalityni.org/
+  jurisdiction: NI
+  body: Equality Commission for Northern Ireland
+  cohort: civil_litigation_forms
+  source_family: equality_commission_ni
+- url: https://www.adviceni.net/
+  jurisdiction: NI
+  body: Advice Northern Ireland
+  cohort: civil_litigation_forms
+  source_family: advice_ni
+- url: https://www.ardsandnorthdown.gov.uk/
+  jurisdiction: NI
+  body: Ards and North Down Borough Council
+  cohort: statutes_si_court_rules
+  source_family: ards_north_down
+- url: https://www.policeombudsman.org/
+  jurisdiction: NI
+  body: Police Ombudsman for Northern Ireland (PONI)
+  cohort: garda_discrimination
+  source_family: police_ombudsman_ni
+
 
 # ---------------------------------------------------------------------------
 # Scotland

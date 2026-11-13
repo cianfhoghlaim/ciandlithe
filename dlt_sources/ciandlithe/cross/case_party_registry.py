@@ -67,9 +67,8 @@ PILOT_PARTIES: list[PilotPartyEntry] = [
         "cohort": "EducationDiscrimination",
         "sub_nation": "IRELAND",
         "display_name": "DkIT disability / education complaint",
-        "leabharlann_pdf": "gemini_deep_research/law/discrimination_case_strategy_university_of_galway.pdf",
+        "leabharlann_pdf": "gemini_deep_research/law/cbd_discrimination_lawsuit_preparation.pdf",
         "companion_pdfs": [
-            "gemini_deep_research/law/cbd_discrimination_lawsuit_preparation.pdf",
             "gemini_deep_research/law/challenging_university_rejection_and_ombudsman_decision.pdf",
         ],
     },
@@ -78,11 +77,10 @@ PILOT_PARTIES: list[PilotPartyEntry] = [
         "cohort": "EducationDiscrimination",
         "sub_nation": "IRELAND",
         "display_name": "NUIG / UoG rejection + abuse of power",
-        "leabharlann_pdf": "gemini_deep_research/law/discrimination_case_strategy_university_of_galway.pdf",
-        "companion_pdfs": [
-            "gemini_deep_research/law/cbd_dispensary_manager_discrimination_lawsuit.pdf",
-        ],
+        "leabharlann_pdf": "gemini_deep_research/law/cbd_dispensary_manager_discrimination_lawsuit.pdf",
+        "companion_pdfs": [],
     },
+
     {
         "party_id": "pilot-ucl",
         "cohort": "AdmissionBreach",
@@ -102,7 +100,18 @@ PILOT_PARTIES: list[PilotPartyEntry] = [
             "gemini_deep_research/medical/essential_tbi_medication.pdf",
         ],
     },
+    {
+        "party_id": "pilot-bangor-harassment",
+        "cohort": "TenancyHarassment",
+        "sub_nation": "NI",
+        "display_name": "Bangor / Belfast HMO singular man domestic harassment / disability discrimination / malicious reporting (November 2026)",
+        "leabharlann_pdf": "bangor.md",
+        "companion_pdfs": [
+            "docs/case-study/bangor-tenancy-harassment.md",
+        ],
+    },
 ]
+
 
 
 __all__ = ["PILOT_PARTIES", "PilotPartyEntry"]

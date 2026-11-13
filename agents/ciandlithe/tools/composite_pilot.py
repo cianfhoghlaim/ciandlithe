@@ -126,7 +126,18 @@ PILOT_PARTIES: list[dict[str, str]] = [
             "leabharlann/gemini_deep_research/medical/essential_tbi_medication.pdf",
         ],
     },
+    {
+        "party_id": "pilot-bangor-harassment",
+        "cohort": "TenancyHarassment",
+        "sub_nation": "NI",
+        "display_name": "Bangor / Belfast HMO singular man domestic harassment / disability discrimination / malicious reporting (November 2026)",
+        "leabharlann_pdf": "bangor.md",
+        "companion_pdfs": [
+            "docs/case-study/bangor-tenancy-harassment.md",
+        ],
+    },
 ]
+
 
 
 def composite_pilot_tool(
@@ -249,6 +260,7 @@ def composite_pilot_tool(
                 "EducationDiscrimination",
                 "AdmissionBreach",
                 "CivilActionOutline",
+                "TenancyHarassment",
                 "all",
             ],
             "lineage": "ciandlithe-repo-foundation-v1 + ciandlithe-composite-pilot-workflow-v1",
@@ -257,7 +269,7 @@ def composite_pilot_tool(
 
 
 # -------------------------------------------------------------------
-# 6 per-cohort FunctionTool stubs (each wraps composite_pilot_tool with
+# 7 per-cohort FunctionTool stubs (each wraps composite_pilot_tool with
 # a default cohort). Mirrors the cianchosaint precedent of one tool per
 # vertical.
 # -------------------------------------------------------------------
@@ -285,6 +297,10 @@ def civil_action_outline_tool(pilot_party_id: str | None = None) -> dict[str, An
     return composite_pilot_tool(cohort="CivilActionOutline", pilot_party_id=pilot_party_id)
 
 
+def tenancy_harassment_tool(pilot_party_id: str | None = None) -> dict[str, Any]:
+    return composite_pilot_tool(cohort="TenancyHarassment", pilot_party_id=pilot_party_id)
+
+
 __all__ = [
     "PILOT_PARTIES",
     "composite_pilot_tool",
@@ -294,7 +310,9 @@ __all__ = [
     "education_discrimination_tool",
     "admission_breach_tool",
     "civil_action_outline_tool",
+    "tenancy_harassment_tool",
 ]
+
 
 
 if __name__ == "__main__":

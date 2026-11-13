@@ -53,7 +53,7 @@ class DamagesEstimate {
 
 class CompositePilotDossier {
   case_id            string
-  cohort             enum<MedicalMalpractice, EmployerBreach, GardaDiscrimination, EducationDiscrimination, AdmissionBreach, CivilActionOutline>
+  cohort             enum<MedicalMalpractice, EmployerBreach, GardaDiscrimination, EducationDiscrimination, AdmissionBreach, CivilActionOutline, TenancyHarassment>
   jurisdiction       Jurisdiction
   court_level        CourtLevel
   parties            CaseParty[]
@@ -133,7 +133,7 @@ function ExtractCompositePilotDossier(
 
     For the COMPOSITE PILOT, the cohort MUST be one of:
     MedicalMalpractice | EmployerBreach | GardaDiscrimination | EducationDiscrimination |
-    AdmissionBreach | CivilActionOutline.
+    AdmissionBreach | CivilActionOutline | TenancyHarassment.
 
     For every party, set is_public_official = True ONLY if the party is a named government official
     (e.g. a named judge, named WRC adjudicator, named PSNI officer). For named private individuals
