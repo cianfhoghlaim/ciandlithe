@@ -1,6 +1,6 @@
 ---
 name: browser-tools
-description: Router for all browser automation + web scraping + agent-on-the-web tools in Cianfhoghlaim. Use this to decide which tool fits a task: Crawl4AI (self-hosted REST), Crawl4AI MCP (v0.9.x native), Firecrawl MCP, Firecrawl CLI, Skyvern, Stagehand, or Playwright/CDP. Covers when to use each, the auth + cookie patterns, the 6-backend architecture (3 default + 2 opt-in + 1 MCP-native), the new Crawl4AI v0.9.x features (native MCP server, secure-by-default, JWT auth), the opt-in pattern for Skyvern + Stagehand, and the KCG safety rules (domain allowlist, no unscraped authentication flows). Triggers: 'browse website', 'scrape URL', 'login flow', 'click button', 'extract data from page', 'browser agent', 'autonomous browsing', 'screenshot', 'PDF capture', 'authenticated scraping', 'Crawl4AI', 'deep crawl', 'MCP-native'.
+description: Router for all browser automation + web scraping + agent-on-the-web tools in Cianfhoghlaim. Use this to decide which tool fits a task: Crawl4AI (self-hosted REST), Crawl4AI MCP (v0.9.x native), Firecrawl MCP, Firecrawl CLI, Skyvern, Stagehand, or Playwright/CDP. Covers when to use each, the auth + cookie patterns, the 6-backend architecture (3 default + 2 opt-in + 1 MCP-native), the new Crawl4AI v0.9.x features (native MCP server, secure-by-default, JWT auth), the opt-in pattern for Skyvern + Stagehand, and the Cianfhoghlaim safety rules (domain allowlist, no unscraped authentication flows). Triggers: 'browse website', 'scrape URL', 'login flow', 'click button', 'extract data from page', 'browser agent', 'autonomous browsing', 'screenshot', 'PDF capture', 'authenticated scraping', 'Crawl4AI', 'deep crawl', 'MCP-native'.
 ---
 
 # Browser Tools — Router (post v4 + Crawl4AI v0.9.x + native MCP)
@@ -87,7 +87,7 @@ result = client.search(backend=BackendType.STAGEHAND_LOCAL, query="...")
 | `BFSDeepCrawlStrategy` / `DFSDeepCrawlStrategy` | Full-site crawling | `client.bulk_crawl(seed_url, strategy="BFS")` |
 | Hooks (`on_page_context_created`, etc.) | Login automation + cookie capture | n/a (advanced) |
 
-## KCG safety rules
+## Cianfhoghlaim safety rules
 
 1. **No unscraped authentication flows** — any login / OAuth / MFA
    interaction MUST go through Firecrawl interact (which can

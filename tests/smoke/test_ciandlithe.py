@@ -65,7 +65,7 @@ def test_composite_pilot() -> None:
     result = mod.composite_pilot_tool(cohort="all")
     assert result["osint_ceiling_enforced"] is True
     assert result["analyst_review_required"] is True
-    assert len(result["dossiers"]) == 7, f"Expected 7 dossiers, got {len(result['dossiers'])}"
+    assert len(result["dossiers"]) == 8, f"Expected 8 dossiers, got {len(result['dossiers'])}"
     for d in result["dossiers"]:
         assert d["osint_ceiling_enforced"] is True
         assert d["analyst_review_required"] is True
@@ -73,7 +73,7 @@ def test_composite_pilot() -> None:
 
 
 def test_per_cohort_tools() -> None:
-    """Verify the 6 per-cohort tools work."""
+    """Verify the 7 per-cohort tools work."""
     spec = importlib.util.spec_from_file_location(
         "composite_pilot", REPO_ROOT / "agents/ciandlithe/tools/composite_pilot.py"
     )
@@ -87,12 +87,14 @@ def test_per_cohort_tools() -> None:
         ("EducationDiscrimination", mod.education_discrimination_tool),
         ("AdmissionBreach", mod.admission_breach_tool),
         ("CivilActionOutline", mod.civil_action_outline_tool),
+        ("TenancyHarassment", mod.tenancy_harassment_tool),
     ]:
         result = tool_fn()
         assert result["osint_ceiling_enforced"] is True
         assert result["analyst_review_required"] is True
         for d in result["dossiers"]:
             assert d["cohort"] == cohort
+
 
 
 def test_complaint_classifier() -> None:
@@ -126,8 +128,18 @@ def test_complaint_classifier() -> None:
     )
     assert result3["cohort"] in ("AdmissionBreach", "EducationDiscrimination")  # DBS may map to either
 
+    # Sample 4: tenancy harassment in Bangor, NI
+    result4 = mod.classify_complaint(
+        "My housemate in a Bangor HMO is harassing me over my bedroom speech and food tampering, and made a false police report."
+    )
+    assert result4["cohort"] == "TenancyHarassment"
+    assert result4["jurisdiction"] == "NI"
+    assert result4["osint_ceiling_enforced"] is True
+    assert result4["analyst_review_required"] is True
+
 
 def test_license_posture() -> None:
+
     """Verify the LICENSE.md contains the 4 mandatory sections."""
     license_md = (REPO_ROOT / "LICENSE.md").read_text()
     for required_section in [
@@ -141,12 +153,18 @@ def test_license_posture() -> None:
 
 def test_pilot_parties_exist_in_leabharlann() -> None:
     """Verify every pilot party's primary PDF exists on disk in leabharlann/."""
+    default_root = (
+        Path.home() / "dev" / "leabharlann"
+        if (Path.home() / "dev" / "leabharlann").exists()
+        else Path.home() / "dev" / "cianfhoghlaim" / "leabharlann"
+    )
     leabharlann_root = Path(
         os.environ.get(
             "CIANDLITHE_LEABHARLANN_ROOT",
-            str(Path.home() / "dev" / "cianfhoghlaim" / "leabharlann"),
+            str(default_root),
         )
     )
+
 
     spec = importlib.util.spec_from_file_location(
         "case_study_loader", REPO_ROOT / "dlt_sources/ciandlithe/cross/case_study_loader.py"

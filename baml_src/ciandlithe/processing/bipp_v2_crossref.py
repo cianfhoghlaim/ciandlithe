@@ -141,7 +141,20 @@ PILOT_TO_BIPP_V2_MAP: dict[str, BippV2CohortReference] = {
         related_political_entities=["HSE", "Fine Gael", "Varadkar", "Galway West by-election", "Department of Health"],
         extraction_confidence=1.0,
     ),
+    "pilot-bangor-harassment": BippV2CohortReference(
+        ciandlithe_pilot_id="pilot-bangor-harassment",
+        ciandlithe_cohort="tenancy_harassment",
+        bipp_v2_cohort_id="ni_political_accountability",
+        bipp_v2_jurisdiction="ni",
+        leabharlann_pdf_urls=[
+            "leabharlann/gemini_deep_research/law/english_noise_tenancy_and_discrimination_laws.pdf",
+            "leabharlann/gemini_deep_research/politics/sinn_f_in_data_funding_and_foreign_influence.pdf",
+        ],
+        related_political_entities=["Ards and North Down Borough Council", "NI Executive", "Department for Communities", "PSNI", "NICTS"],
+        extraction_confidence=1.0,
+    ),
 }
+
 
 
 class BippV2CrossrefResolver:

@@ -1,22 +1,6 @@
 ---
 name: graphiti
-description: Temporal knowledge graph memory for agents. Use when building persistent agent memory with bi-temporal model (event time + ingestion time), episodic memory, entity resolution, contradiction detection, or the Graphiti + FalkorDB + LiteLLM triad. Covers `Graphiti(uri="falkor://...")`, `add_episode`, `add_episode_bulk`, `search_`, `summarize_saga` (v0.29.0), `EpisodeType.{text,json,fact_triple,message}`, and the `FalkorDB Lite` embedded mode (`graphiti-core[falkordblite]`, Python 3.12+). Pin `graphiti-core >= 0.28.2` (Cypher-injection CVE #1312 in 0.28.1). v0.29.0 switched episode indexing to 0-based.
-
-## What's new in 2026-08/09
-
-This skill was refreshed as part of the 2026-08-23 omnibus skill refresh
-(per the  change). Key
-updates:
-
-- **2026-08 tooling**: aligned with the latest versions of upstream
-  libraries (per the dev-tooling version-pinning change)
-- **2026-08 patterns**: documented new features surfaced via the
-  Phase 3 (surfaces round) refactor
-- **Cross-references**: linked to adjacent skills (per the AGENTS.md
-  dispatch matrix)
-
-See the linked spec changes for full details.
-
+description: Temporal knowledge graph memory for agents. Use when building persistent agent memory with bi-temporal model (event time + ingestion time), episodic memory, entity resolution, contradiction detection, or the Graphiti + FalkorDB + LiteLLM triad. Covers `Graphiti(uri="falkor://...")`, `add_episode`, `add_episode_bulk`, `search_`, `summarize_saga` (v0.29.0), `EpisodeType.{text,json,fact_triple,message}`, and the `FalkorDB Lite` embedded mode (`graphiti-core[falkordblite]`, Python 3.12+). Pin `graphiti-core >= 0.28.2` (Cypher-injection CVE #1312 in 0.28.1). v0.29.0 switched episode indexing to 0-based. ## What's new in 2026-08/09 This skill was refreshed as part of the 2026-08-23 omnibus skill refresh (per the  change).
 ---
 
 # Graphiti - Temporal Knowledge Graph Memory
@@ -86,9 +70,9 @@ results = await graphiti.search_("FalkorDB curriculum", num_results=10)
    extra (Python 3.12+). For embedded mode pass `FalkorDriver(falkor_db=AsyncFalkorDB(dbfilename=...))`.
 5. **Don't hard-code `gpt-4o-mini` as the default.** v0.29.2 #1551 promoted `gpt-5.5` as the
    upstream default with model-tied reasoning effort. Override with `OpenAIClient(config=LLMConfig(model="your-model"))`.
-6. **Don't use `EpisodeType.text` for KCG product/catalog updates** — `EpisodeType.json`
+6. **Don't use `EpisodeType.text` for Cianfhoghlaim product/catalog updates** — `EpisodeType.json`
    bypasses entity extraction prompts and is ~10× faster.
-7. **Don't assume the docs live at `help.getzep.com/graphiti/graphiti/...`.** The KCG
+7. **Don't assume the docs live at `help.getzep.com/graphiti/graphiti/...`.** The Cianfhoghlaim
    `.env.example` should set `GRAPHPITI_DOCS_URL=https://help.getzep.com/graphiti` (root,
    no double prefix) for the OpenSpec "live-docs" verification.
 

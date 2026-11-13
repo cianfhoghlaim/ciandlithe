@@ -45,12 +45,20 @@ COHORT_KEYWORDS: dict[str, list[str]] = {
         "civil action", "civil suit", "statement of claim", "damages",
         "negligence", "duty of care", "breach", "loss", "injury",
     ],
+    "TenancyHarassment": [
+        "co-tenant", "housemate", "shared tenancy", "shared accommodation", "hmo",
+        "bedroom speech", "noise complaint", "darvo", "food tampering", "false police report",
+        "harassment order", "talem qualem", "eggshell skull", "reflex epilepsy",
+        "lsani", "housing rights", "non-molestation", "green book", "wasting police time",
+        "singular man", "belfast harassment", "bangor harassment", "november 2026",
+    ],
 }
+
 
 
 JURISDICTION_KEYWORDS: dict[str, list[str]] = {
     "IRELAND": ["ireland", "irish", "dublin", "cork", "galway", "limerick", "waterford", "ROI", "éire", "gaelic"],
-    "NI": ["northern ireland", "belfast", "derry", "lisburn", "newry", "NI"],
+    "NI": ["northern ireland", "belfast", "derry", "lisburn", "newry", "bangor", "county down", "north down", "ards and north down", "NI"],
     "SCOTLAND": ["scotland", "edinburgh", "glasgow", "aberdeen", "dundee", "scottish"],
     "WALES": ["wales", "cardiff", "swansea", "newport", "welsh", "cymru"],
     "ENGLAND": ["england", "london", "manchester", "birmingham", "bristol", "liverpool", "leeds", "english"],

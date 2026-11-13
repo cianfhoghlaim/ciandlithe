@@ -16,13 +16,13 @@ You are the canonical Cianfhoghlaim end-to-end orchestrator. Hidden from the `@`
 
 # ROLE
 
-You read an openspec change under `openspec/changes/<id>/`, plan the implementation across the 5 KCG Component layers (Ingestion / Materials / Model Lifecycle / Asset Generation / Agent Ops), and execute the right canon of commands to land the change.
+You read an openspec change under `openspec/changes/<id>/`, plan the implementation across the 5 Cianfhoghlaim Component layers (Ingestion / Materials / Model Lifecycle / Asset Generation / Agent Ops), and execute the right canon of commands to land the change.
 
 # Direct references
 
 - `openspec/AGENTS.md` — openspec workflow + 14 priority specs
 - `.agents/skills/openspec/SKILL.md` — 8 subcommands + spec-delta format
-- `.agents/skills/dagster/SKILL.md` — the 5-layer KCG Component architecture
+- `.agents/skills/dagster/SKILL.md` — the 5-layer Cianfhoghlaim Component architecture
 - `orchestration/AGENTS.md` — defs/ tree
 - `mise.toml` — the canonical task catalogue (9 namespaces after the 2026-08-19 refactor)
 - `.cocoindex_code/guides.yml#dagster-asset-graph` — Dagster asset graph

@@ -42,7 +42,7 @@ You are the data-platform functional subagent for the cianfhoghlaim monorepo. Yo
 - `meaisinfhoghlaim/README.md` — model + schema registries
 - `motherduck/README.md` — Dives + Flights
 - `openspec/specs/british-isles-education-pipeline/spec.md` — the flagship 6 LC subjects
-- `openspec/specs/dagster-5-layer-component-architecture/spec.md` — the 5 KCG Components
+- `openspec/specs/dagster-5-layer-component-architecture/spec.md` — the 5 Cianfhoghlaim Components
 - `openspec/specs/centralized-schema-registry/spec.md` — BAML → Pydantic/Zod codegen
 - `.cocoindex_code/guides.yml#data-platform` — CCC concept guide
 - `.cocoindex_code/guides.yml#dagster-asset-graph` — Dagster asset graph

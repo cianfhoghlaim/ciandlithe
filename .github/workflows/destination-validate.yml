@@ -1,0 +1,71 @@
+name: destination-validate
+
+# Per the 2026-08-24-dlt-sources-to-multi-repo-scaffold-v1 change
+# (Phase 2.6 — destination-versioning contract).
+#
+# Wires the `mise run ciandlithe:dlt:destination-validate` task into
+# ciandlithe's CI gate. The task enforces the `cianfhoghlaim>=1.0,<2.0`
+# loose pin declared in pyproject.toml (the downgrade-gate).
+#
+# Standalone mode (today, Phase 2.6 scaffolding): ciandlithe is a
+# STANDALONE iteration of cianfhoghlaim (no [tool.uv.sources]
+# workspace dependency), so the gate exercises the LOCAL copy of the
+# canonical destination helpers. When Phase 3 adds the workspace
+# member, the gate will validate the pinned `cianfhoghlaim>=1.0,<2.0`.
+
+on:
+  pull_request:
+    paths:
+      - "pyproject.toml"
+      - "uv.lock"
+      - "mise.toml"
+      - "dlt_sources/**"
+  push:
+    branches: [main]
+    paths:
+      - "pyproject.toml"
+      - "uv.lock"
+      - "mise.toml"
+      - "dlt_sources/**"
+  workflow_dispatch:
+  schedule:
+    # Daily at 03:00 UTC — catches destination-version drift on
+    # cianfhoghlaim before the next nightly mirror-merge at 02:30 UTC.
+    - cron: "0 3 * * *"
+
+jobs:
+  destination-validate:
+    name: mise run ciandlithe:dlt:destination-validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Install mise + toolchain
+        run: |
+          curl -fsSL https://mise.jdx.dev/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install Python + uv
+        run: mise install
+
+      - name: Run the dlt:destination-validate gate
+        run: mise run ciandlithe:dlt:destination-validate
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## ciandlithe:dlt:destination-validate summary"
+            echo
+            echo "- **Run ID**: ${{ github.run_id }}"
+            echo "- **Trigger**: ${{ github.event_name }}"
+            echo "- **Result**: ${{ job.status }}"
+            echo
+            echo "### Loose pin"
+            echo '```toml'
+            echo 'cianfhoghlaim>=1.0,<2.0'
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY

@@ -1,22 +1,6 @@
 ---
 name: dlt
-description: Master routing skill for data load tool (dlt 1.28.1, June 2026). Use this to understand dlt rules, decide which sub-skill to invoke, and apply the Cianfhoghlaim dlt conventions (DuckLake/DuckDB destination, USE_LOCAL_SCRAPES offline fallback, relative imports only, type-safe BAML-driven pipelines, multi-destination fan-out to LanceDB / Memgraph / Graphiti, and Dagster dlt_assets wrapping). Powers the British-Isles Education pipeline (6 LC subjects + gov.ie circulars). Notes the 1.27 `dlt[hub]` plugin split and the 1.28 `refresh` > `replace` deprecation.
-
-## What's new in 2026-08/09
-
-This skill was refreshed as part of the 2026-08-23 omnibus skill refresh
-(per the  change). Key
-updates:
-
-- **2026-08 tooling**: aligned with the latest versions of upstream
-  libraries (per the dev-tooling version-pinning change)
-- **2026-08 patterns**: documented new features surfaced via the
-  Phase 3 (surfaces round) refactor
-- **Cross-references**: linked to adjacent skills (per the AGENTS.md
-  dispatch matrix)
-
-See the linked spec changes for full details.
-
+description: Master routing skill for data load tool (dlt 1.28.1, June 2026). Use this to understand dlt rules, decide which sub-skill to invoke, and apply the Cianfhoghlaim dlt conventions (DuckLake/DuckDB destination, USE_LOCAL_SCRAPES offline fallback, relative imports only, type-safe BAML-driven pipelines, multi-destination fan-out to LanceDB / Memgraph / Graphiti, and Dagster dlt_assets wrapping). Powers the British-Isles Education pipeline (6 LC subjects + gov.ie circulars). Notes the 1.27 `dlt[hub]` plugin split and the 1.28 `refresh` > `replace` deprecation. ## What's new in 2026-08/09 This skill was refreshed as part of the 2026-08-23 omnibus skill refresh (per the  change).
 ---
 
 # DLT Master Router & Rules (Cianfhoghlaim)
@@ -174,7 +158,7 @@ guide to invoke the most appropriate resource:
 - **`crawl4ai`** — see `references/crawl4ai-dlt-summary.md` (alternative
   to Firecrawl for JS-heavy sites)
 
-## 3. Project-specific recipes (KCG patterns)
+## 3. Project-specific recipes (Cianfhoghlaim patterns)
 
 ### Type-safe pipeline (BAML → dlt → oRPC → MCP)
 
@@ -214,7 +198,7 @@ print(load_info)
 The BAML class is the **single source of truth** — both the
 Pydantic `BaseModel` and the dlt `primary_key` derive from it.
 
-### Canonical KCG pattern — British-Isles Education pipeline (lc6)
+### Canonical Cianfhoghlaim pattern — British-Isles Education pipeline (lc6)
 
 The post-v4 canonical pipeline ingests one of the six Irish Leaving
 Certificate subjects (Mathematics, Chemistry, Geography, Gaeilge,
@@ -446,14 +430,14 @@ Cross-references:
 ## 2026-06 updates (from the `upstream-package-monitoring` openspec change)
 
 - **dltHub Pro** launched 2026-04-14. The Pro tier adds 9,700+ known
-  source contexts that DLT can pull from in one call. The KCG dev
+  source contexts that DLT can pull from in one call. The Cianfhoghlaim dev
   plan is tracked by `openspec/changes/dlt-pro-source-registry/`.
 - **Cortex Code** (Snowflake's AI assistant, launched ~9 weeks before
   dltHub Pro) integrates directly with the dlt Pro source registry.
 - **ADE-Bench** (the AI data-engineer benchmark) reported 65% task
   success on Snowflake via Cortex Code vs 58% for Claude Code. The
   paper's key finding: **"without the workbench, the agent leaked
-  credentials"** — directly validates KCG's strict-secret-hydration
+  credentials"** — directly validates Cianfhoghlaim's strict-secret-hydration
   mandate (see `docs/secrets/secrets_management_plan.md` for the
   Infisical + Locket + mise three-way contract).
 - **dlthub upstream monitor** — `dlthub_blog.yml` in

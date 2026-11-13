@@ -434,7 +434,7 @@
       "prompt": "{file:./.opencode/agents/baml.md}"
     },
     "dagster": {
-      "description": "Dagster asset + component + job authoring for the 5-layer KCG architecture.",
+      "description": "Dagster asset + component + job authoring for the 5-layer Cianfhoghlaim architecture.",
       "model": "qwen/qwen3-coder-next",
       "mode": "subagent",
       "color": "#5a3a5a",

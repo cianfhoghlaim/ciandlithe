@@ -41,12 +41,13 @@ keywords = [
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Legal Industry",
+    "Intended Audience :: Healthcare Industry",
     "License :: Other/Proprietary License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Topic :: Office/Business :: Financial :: Investment",
-    "Topic :: Sociology :: Law",
+    "Topic :: Sociology",
 ]
 
 dependencies = [
@@ -56,11 +57,39 @@ dependencies = [
     "cocoindex>=1.0.14",
     "lancedb>=0.20.0",
     "duckdb>=1.4.0",
-    "motherduck>=0.10.0",
     "pydantic>=2.10.0",
     "structlog>=25.0.0",
     "pyyaml>=6.0.0",
     "langfuse>=4.0.0",
+    # Per the openspec/changes/ciandlithe-toolchain-repair-v1 change
+    # (Phase 1 — toolchain repair): pymupdf is used by the WO-1 corpus
+    # ingest pipeline. Pin now so `uv run --python 3.12` resolves
+    # cleanly.
+    "pymupdf>=1.24",
+    # Per the 2026-08-24-dlt-sources-to-multi-repo-scaffold-v1 change
+    # (Phase 2.6 — destination-versioning contract): cianfhoghlaim is
+    # the cross-cutting hub for the canonical DLT destinations
+    # (destinations_cianfhoghlaim + ducklake factory + multischema
+    # support). The sister repos depend on it via this loose pin so
+    # any destination-version bump on cianfhoghlaim flows to the
+    # sister via `mise run ciandlithe:dlt:destination-validate` (the
+    # downgrade gate).
+    #
+    # NOTE: The sister repos are STANDALONE today (no
+    # [tool.uv.sources]); the wholesale-copy pattern means the actual
+    # import resolution happens via the local duplicates, not via a
+    # real Python package dependency. Per the v2 plan + the parent
+    # change's task §21.3b, the destination-versioning contract is
+    # gated by the per-sister `mise run <repo>:dlt:destination-validate`
+    # CI workflow (NOT by a pip pin). If cianfhoghlaim becomes a uv
+    # workspace member in a future phase, replace the CI gate with a
+    # `[tool.uv.sources]` workspace declaration.
+    "mlflow>=2.18.0",
+    # motherduck is published as a 0.0.0 placeholder on PyPI; the
+    # real client ships via the MotherDuck account SDK. Moved to the
+    # `lakehouse` extras group (ciandlithe[lakehouse]) so the default
+    # `uv run --python 3.12` doesn't try to resolve a phantom version.
+    # WO-2 (ciandlithe-lakehouse-medallion-v1) installs the real client.
 ]
 
 [project.optional-dependencies]
@@ -69,7 +98,19 @@ dev = [
     "pytest-asyncio>=0.25.0",
     "ruff>=0.12.0",
     "mypy>=1.13.0",
-    "openspec>=1.4.0",
+    # `openspec` and `motherduck` are NOT installable via PyPI:
+    #   - openspec ships as a `bunx openspec` binary (or via `npm i -g @fission-ai/openspec`)
+    #   - motherduck ships as the MotherDuck account SDK (not on PyPI)
+    # The `mise run` tasks invoke them via the mise [tools] section
+    # (per ciandlithe-toolchain-repair-v1) — bun for openspec,
+    # direct binary install for motherduck. They do not need to be
+    # in any [project.optional-dependencies] group.
+    #
+    # motherduck is intentionally NOT in any pip-resolvable group (PyPI
+    # publishes it as 0.0.0 — a placeholder). WO-2
+    # (ciandlithe-lakehouse-medallion-v1) installs the real client
+    # from the MotherDuck account SDK and re-introduces the lakehouse
+    # dependency-group at that point.
 ]
 
 [tool.ruff]

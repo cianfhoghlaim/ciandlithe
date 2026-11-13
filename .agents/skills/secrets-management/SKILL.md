@@ -1,6 +1,6 @@
 ---
 name: secrets-management
-description: Secrets management for the Cianfhoghlaim platform — Infisical + Locket + mise three-way contract. Add/rotate secrets, Locket sidecar pattern, security model (tmpfs, file modes, no-root). Use when adding a new secret, rotating a secret, debugging missing secrets, or wiring a new Locket-enabled stack. **Infisical is the only canonical provider** (1Password migration completed 2026-06; current upstream CLI release is v0.161.9 from 2026-06-26 — verified live 2026-06-29; **docs site no longer publishes conceptual guides — all reference material lives at https://infisical.com/docs/api-reference/endpoints/{provider}/{op}.md discovered via https://infisical.com/docs/llms.txt**). Note: the `Link: …/mcp/server-card.json` header is **stale** as of 2026-06-29 — the referenced JSON endpoint returns 404; do not assume a first-party Infisical MCP server exists. Powers the BIEP secret contract: `infisical://dev-baile/cianfhoghlaim/...` (no `cianfhoghlaim/` prefix). NEW 2026-08-14: the Firecrawl API key follows the contract `infisical://dev-baile/oideachais/firecrawl-api-key` (already wired by `bonneagar/dagger/cianfhoghlaim_dagger/__init__.py:InfisicalSecret("oideachais", "firecrawl-api-key")`). Plus the per-portal credentials for `state-exams-ie` (the examinations.ie login): `infisical://dev-baile/cianfhoghlaim/examinations-ie/{username,password}`.
+description: Secrets management for the Cianfhoghlaim platform — Infisical + Locket + mise three-way contract. Add/rotate secrets, Locket sidecar pattern, security model (tmpfs, file modes, no-root). Use when adding a new secret, rotating a secret, debugging missing secrets, or wiring a new Locket-enabled stack. **Infisical is the only canonical provider** (1Password migration completed 2026-06; current upstream CLI release is v0.161.9 from 2026-06-26 — verified live 2026-06-29; **docs site no longer publishes conceptual guides — all reference material lives at https://infisical.com/docs/api-reference/endpoints/{provider}/{op}.md discovered via https://infisical.com/docs/llms.txt**). Note: the `Link: …/mcp/server-card.json` header is **stale** as of 2026-06-29 — the referenced JSON endpoint returns 404; do not assume a first-party Infisical MCP server exists. Powers the BIEP secret contract: `infisical://dev-baile/cianfhoghlaim/...` (no `cianfhoghlaim/` prefix).
 ---
 
 # Secrets Management — Infisical + Locket + mise
@@ -18,7 +18,7 @@ Use when you need to:
 
 ## Overview
 
-The KCG secrets stack has **3 layers**:
+The Cianfhoghlaim secrets stack has **3 layers**:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -142,9 +142,9 @@ services:
 
 ## Provider reference (Infisical-only)
 
-**Infisical is the only canonical KCG provider** (as of
+**Infisical is the only canonical Cianfhoghlaim provider** (as of
 2026-06-23, the 1Password + 1Password Connect + Bitwarden
-options have been removed; KCG has moved entirely to
+options have been removed; Cianfhoghlaim has moved entirely to
 Infisical). The rationale:
 
 - **Infisical** = cloud + on-prem, OIDC SSO, free tier,
@@ -155,9 +155,9 @@ Infisical). The rationale:
 
 | Provider | Status | Setup |
 |:--|:--|:--|
-| **Infisical** (canonical) | ✅ All KCG projects | `bun run scripts/init-vault.ts` |
+| **Infisical** (canonical) | ✅ All Cianfhoghlaim projects | `bun run scripts/init-vault.ts` |
 
-**Migration history (one-time)**: in June 2026 KCG
+**Migration history (one-time)**: in June 2026 Cianfhoghlaim
 migrated from 1Password → Infisical. The
 `docs/06-infrastructure/integrating-1password-cli-*.md`
 and `where-to-install-1password-cli-op.md` files are
@@ -246,7 +246,7 @@ infisical secrets delete OPENAI_API_KEY_OLD
 - **NEW** `POST /api/v1/dynamic-secrets/leases/kubernetes` — ephemeral K8s lease per `dynamicSecretName`/`projectSlug`/`environmentSlug`/`namespace`/`ttl`. Pair with `gatewayV2Id` for in-cluster gateways.
 - **REMOVED** documentation reference: `infisical SSH` CLI (#7038). Migrate any `SSH` auth flows to `universal-auth` + a dynamic-secret `ssh` type if available.
 - **NO** first-party Infisical MCP server as of 2026-06-29 — `Link` header advertises `/docs/.well-known/mcp/server-card.json` but the URL returns 404. Wave 1's ref 8.4 in `agent-18-infisical.md` (MCP integration) should be **deleted** until/unless a server card is published.
-- **EU region** is now a 1st-class OpenAPI server: `https://eu.infisical.com`. KCG's `arm1-oci` self-host does not need to migrate; the EU server is for multi-region SaaS customers only.
+- **EU region** is now a 1st-class OpenAPI server: `https://eu.infisical.com`. Cianfhoghlaim's `arm1-oci` self-host does not need to migrate; the EU server is for multi-region SaaS customers only.
 - **`trustPayload: boolean`** is new on `kubernetes-auth/login.md` — only `true` in strictly trusted environments (bypasses audience claim validation).
 
 ## Resources
@@ -258,7 +258,7 @@ infisical secrets delete OPENAI_API_KEY_OLD
   - Kubernetes auth login: <https://infisical.com/docs/api-reference/endpoints/kubernetes-auth/login.md>
   - K8s dynamic-secret lease: <https://infisical.com/docs/api-reference/endpoints/dynamic-secrets/kubernetes/create-lease.md>
 - Infisical releases: <https://github.com/Infisical/infisical/releases> (latest `v0.161.9` 2026-06-26)
-- Locket: <https://github.com/cianfhoghlaim/locket> (KCG)
+- Locket: <https://github.com/cianfhoghlaim/locket> (Cianfhoghlaim)
 - mise: <https://mise.jdx.dev/>
 
 ---

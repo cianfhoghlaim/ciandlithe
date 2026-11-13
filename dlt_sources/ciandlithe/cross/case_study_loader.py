@@ -32,8 +32,11 @@ except ImportError:
 # The canonical leabharlann root (the user's private leabharlann repo)
 DEFAULT_LEABHARLANN_ROOT = os.environ.get(
     "CIANDLITHE_LEABHARLANN_ROOT",
-    str(Path.home() / "dev" / "cianfhoghlaim" / "leabharlann"),
+    str(Path.home() / "dev" / "leabharlann")
+    if (Path.home() / "dev" / "leabharlann").exists()
+    else str(Path.home() / "dev" / "cianfhoghlaim" / "leabharlann"),
 )
+
 
 
 # The 7 composite-pilot parties + their canonical leabharlann PDF paths
@@ -72,9 +75,8 @@ PILOT_PARTY_PDFS: list[dict[str, str]] = [
         "party_id": "pilot-dkit",
         "cohort": "EducationDiscrimination",
         "sub_nation": "IRELAND",
-        "primary_pdf": "gemini_deep_research/law/discrimination_case_strategy_university_of_galway.pdf",
+        "primary_pdf": "gemini_deep_research/law/cbd_discrimination_lawsuit_preparation.pdf",
         "companion_pdfs": [
-            "gemini_deep_research/law/cbd_discrimination_lawsuit_preparation.pdf",
             "gemini_deep_research/law/challenging_university_rejection_and_ombudsman_decision.pdf",
         ],
     },
@@ -82,11 +84,10 @@ PILOT_PARTY_PDFS: list[dict[str, str]] = [
         "party_id": "pilot-nuig",
         "cohort": "EducationDiscrimination",
         "sub_nation": "IRELAND",
-        "primary_pdf": "gemini_deep_research/law/discrimination_case_strategy_university_of_galway.pdf",
-        "companion_pdfs": [
-            "gemini_deep_research/law/cbd_dispensary_manager_discrimination_lawsuit.pdf",
-        ],
+        "primary_pdf": "gemini_deep_research/law/cbd_dispensary_manager_discrimination_lawsuit.pdf",
+        "companion_pdfs": [],
     },
+
     {
         "party_id": "pilot-ucl",
         "cohort": "AdmissionBreach",
@@ -104,7 +105,18 @@ PILOT_PARTY_PDFS: list[dict[str, str]] = [
             "gemini_deep_research/medical/essential_tbi_medication.pdf",
         ],
     },
+    {
+        "party_id": "pilot-bangor-harassment",
+        "cohort": "TenancyHarassment",
+        "sub_nation": "NI",
+        "primary_pdf": "bangor.md",
+        "companion_pdfs": [
+            "docs/case-study/bangor-tenancy-harassment.md",
+        ],
+    },
 ]
+
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 
 def load_case_study(party_id: str, leabharlann_root: str | None = None) -> dict[str, Any]:
@@ -136,10 +148,18 @@ def load_case_study(party_id: str, leabharlann_root: str | None = None) -> dict[
             "error": f"unknown party_id {party_id!r}; valid ids: {[p['party_id'] for p in PILOT_PARTY_PDFS]}",
         }
 
-    primary_pdf_path = root / pilot_party["primary_pdf"]
+    rel_primary = pilot_party["primary_pdf"]
+    if (REPO_ROOT / rel_primary).exists():
+        primary_pdf_path = REPO_ROOT / rel_primary
+    else:
+        primary_pdf_path = root / rel_primary
+
     companion = []
     for c in pilot_party["companion_pdfs"]:
-        cp = root / c
+        if (REPO_ROOT / c).exists():
+            cp = REPO_ROOT / c
+        else:
+            cp = root / c
         companion.append({
             "relative_path": c,
             "absolute_path": str(cp),

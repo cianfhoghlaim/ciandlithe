@@ -1,0 +1,52 @@
+# subapp_manifest.yaml — the 3-tier subapp declaration.
+# Read by cianfhoghlaim/scripts/sync/sync_subapps.py.
+# See openspec/specs/web-frontend-3-tier/spec.md for the full spec.
+
+api_version: cianfhoghlaim/v1
+kind: subapp
+
+metadata:
+  name: ciandlithe
+  display_name: OSINT civil + administrative + appellate litigation
+  upstream_repo: github.com/cianmacandeisigh/ciandlithe
+  upstream_branch: main
+  parent: cianfhoghlaim
+
+spec:
+  # TIER 3 is the only valid value for subapps.
+  tier: 3
+
+  # The 5 valid pace layers: daily | weekly | monthly | quarterly | per_openspec_change
+  pace_layer: quarterly
+
+  # The 4 valid deployment targets: gcp_cloud_run | bare_metal | private_cloud | parent
+  deployment_target: private_cloud
+
+  # The 5 valid licences: MIT | BUSL-1.1 | BUSL-1.1-v2-cianchosaint | BUSL-1.1-v2-ciandlithe | pending
+  licence: BUSL-1.1-v2-ciandlithe
+
+  # The TIER 1 packages this subapp uses.
+  # Valid values: model-registry | fleet | theming | agui-bridge | baml-helpers |
+  #               observability | db | auth | ui-kit | dlt-common
+  depends_on_tier_1:
+    - model-registry
+    - fleet
+    - theming
+    - agui-bridge
+    - observability
+    - dlt-common
+    - auth
+    - baml-helpers
+    - ui-kit
+    - db
+
+  # The BAML extract surfaces (in the subapp).
+  baml_surfaces:
+    - ciandlithe
+
+  # The openspec change IDs to mirror.
+  openspec_changes:
+    - 2026-08-24-ciandlithe-composite-pilot
+    - 2026-08-24-ciandlithe-blip-v1-m1
+    - 2026-08-24-ciandlithe-blip-v1-m2
+    - 2026-08-24-ciandlithe-blip-v1-m3

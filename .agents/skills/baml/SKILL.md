@@ -463,7 +463,7 @@ normalization engine auto-creates a child table
 
 The same BAML class can fan out to:
 
-| Store | dlt mechanism | KCG use |
+| Store | dlt mechanism | Cianfhoghlaim use |
 |:--|:--|:--|
 | **Postgres / DuckDB** | Native dlt destination | `secrets.toml` swap |
 | **LanceDB** | `dlt.destinations.adapters.lancedb_adapter(embed=[...])` | Vector search |
@@ -522,7 +522,7 @@ Add a field once; propagate everywhere.
 | 7 | API | oRPC + Zod | Validated response |
 | 8 | UI | React + TS interface | Rendered |
 
-### KCG anti-patterns for polyglot BAML
+### Cianfhoghlaim anti-patterns for polyglot BAML
 
 - **Don't write Zod by hand** — drift is inevitable.
   Always `ts-to-zod` from the BAML-generated TS.
@@ -540,7 +540,7 @@ Add a field once; propagate everywhere.
 See `openspec/changes/lc6-biep/references/baml-adaptive-syllabus.md` and
 the full BAML+DLT+TanStack deep dive in
 `openspec/changes/lc6-biep/references/baml-irish-education-kg.md`
-for the canonical KCG pattern with Restate workflows
+for the canonical Cianfhoghlaim pattern with Restate workflows
 and adaptive TypeBuilder schemas.
 
 ## Cross-references
